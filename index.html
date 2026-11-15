@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+  <title>HDX Hub — Reverse Engineering Concept</title>
+  <meta name="description" content="하이멕 공개 자료를 토대로 복원한 HDX Hub 플랫폼 콘셉트">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="rail">
+    <div class="brand"><span class="mark">H</span><div><b>HDX Hub</b><small>Concept Reconstruction</small></div></div>
+    <nav id="nav">
+      <button class="active" data-view="overview">⌂ <span>통합 대시보드</span></button>
+      <button data-view="hdp">⇄ <span>HDP 프로세스</span></button>
+      <button data-view="hdb">▤ <span>HDB 데이터</span></button>
+      <button data-view="hdt">⌘ <span>HDT 설계도구</span></button>
+      <button data-view="ai">✦ <span>AI 설계지원</span></button>
+      <button data-view="evidence">◎ <span>근거와 추정</span></button>
+    </nav>
+    <div class="scope"><b>공개자료 기반 콘셉트</b><p>실제 내부 화면이나 구현을 복제한 것이 아닙니다.</p></div>
+  </aside>
+  <main>
+    <header><div><p class="eyebrow">HIMEC DIGITAL TRANSFORMATION</p><h1 id="title">통합 대시보드</h1></div><div class="header-actions"><button class="ghost" id="toggleEvidence">근거 표시</button><div class="avatar">AX</div></div></header>
+
+    <section class="view active" id="overview">
+      <div class="hero"><div><span class="pill confirmed">CONFIRMED STRUCTURE</span><h2>프로세스가 데이터를 만들고,<br>데이터가 설계를 더 빠르게 합니다.</h2><p>HDP·HDB·HDT를 하나의 업무 흐름으로 연결한 HDX Hub 복원 콘셉트입니다.</p></div><div class="cycle"><div>HDP<small>표준 업무</small></div><i>→</i><div>HDB<small>지식 자산</small></div><i>→</i><div>HDT<small>자동 설계</small></div></div></div>
+      <div class="metrics"><article><span>진행 프로젝트</span><b>24</b><small>예시 데이터</small></article><article><span>표준 Workflow</span><b>128</b><small>콘셉트 표시</small></article><article><span>등록 Toolkit</span><b>14</b><small class="confirmed-text">공개자료 확인</small></article><article><span>검토 대기</span><b>7</b><small>예시 데이터</small></article></div>
+      <div class="grid two"><article class="panel"><div class="panel-head"><div><span class="kicker">PROJECT WBS</span><h3>업무·산출물 현황</h3></div><button>전체 보기</button></div><div class="progress-list"><div><span>기계설비 기본설계</span><b>78%</b><i style="--p:78%"></i></div><div><span>전기·정보통신 실시설계</span><b>54%</b><i style="--p:54%"></i></div><div><span>데이터센터 공조 검토</span><b>91%</b><i style="--p:91%"></i></div></div></article><article class="panel"><div class="panel-head"><div><span class="kicker">KNOWLEDGE</span><h3>최근 표준자료</h3></div></div><div class="docs"><button><i>STD</i><span>기계설비 계산서 표준<small>기준표준 · 승인됨</small></span><b>›</b></button><button><i>DWG</i><span>데이터센터 표준도면<small>표준도면 · 검토중</small></span><b>›</b></button><button><i>LAW</i><span>기계설비 법규 업데이트<small>외부 DB · 동기화</small></span><b>›</b></button></div></article></div>
+      <article class="panel architecture"><div class="panel-head"><div><span class="kicker">RECONSTRUCTED ARCHITECTURE</span><h3>HDX 순환 구조</h3></div><span class="legend"><i></i> 확인 <i></i> 추정</span></div><div class="arch-flow"><div class="arch-card cyan"><b>HDP</b><span>Process 관리</span><span>Workflow Map</span><span>Workflow Biz</span></div><em>업무 실행</em><div class="arch-card blue"><b>HDB</b><span>프로젝트 WBS</span><span>통합문서·DB 검색</span><span>DB + File Server</span></div><em>입력·출력</em><div class="arch-card navy"><b>HDT</b><span>Excel Toolkit</span><span>자체 개발 SW</span><span>외부 프로그램</span></div><em class="inferred">검증 후 학습</em><div class="arch-card ai"><b>AI / RAG</b><span>근거형 검색</span><span>설계 검토 보조</span><span>Human approval</span></div></div></article>
+    </section>
+
+    <section class="view" id="hdp"><div class="section-intro"><span class="pill confirmed">HDP · ENGINEERING PROCESS</span><h2>숙련자의 암묵지를 실행 가능한 표준으로</h2><p>부서·담당자마다 달랐던 업무를 WBS, 입력조건, 산출물, 검토 게이트로 구조화합니다.</p></div><div class="process-board"><div class="lane-labels"><b>단계</b><b>업무</b><b>입력 데이터</b><b>산출물 / Gate</b></div><div class="process-row"><i>01</i><strong>프로젝트 착수</strong><span>계약·요구조건</span><button>프로젝트 개요 승인</button></div><div class="process-row"><i>02</i><strong>기본설계</strong><span>기준·부하·기상</span><button>계산서 검토</button></div><div class="process-row"><i>03</i><strong>실시설계</strong><span>장비·배관·전력</span><button>도면 간섭 검토</button></div><div class="process-row"><i>04</i><strong>성과품 제출</strong><span>도면·계산서·보고서</span><button>최종 승인·보관</button></div></div><div class="callout"><b>복원 원칙</b><p>프로세스는 단순 체크리스트가 아니라, 각 업무가 어떤 데이터를 읽고 어떤 산출물을 남기는지 정의하는 데이터 생성 규칙이어야 합니다.</p></div></section>
+
+    <section class="view" id="hdb"><div class="section-intro"><span class="pill confirmed">HDB · ENGINEERING DATABASE</span><h2>문서 보관함에서 설계 지식 그래프로</h2><p>공개 개념도의 전사·프로젝트·서버 계층을 화면 정보구조로 복원했습니다.</p></div><div class="data-layout"><div class="tree panel"><h3>프로젝트 분류</h3><button class="selected">▾ 데이터센터</button><button>　서울 DC-24</button><button>　글로벌 DC-07</button><button>▸ 업무시설</button><button>▸ 연구시설</button></div><div class="panel table"><div class="panel-head"><div><span class="kicker">INTEGRATED SEARCH</span><h3>통합문서·DB 검색</h3></div><input placeholder="프로젝트, 문서, 기준, 파라미터 검색"></div><div class="table-row head"><span>유형</span><span>자료명</span><span>프로젝트</span><span>상태</span></div><div class="table-row"><i>CALC</i><b>냉방부하 계산서</b><span>서울 DC-24</span><em>승인</em></div><div class="table-row"><i>DWG</i><b>공조계통 표준도면</b><span>전사 표준</span><em>표준</em></div><div class="table-row"><i>LAW</i><b>관련 법규·공공데이터</b><span>외부 연계</span><em>동기화</em></div></div></div></section>
+
+    <section class="view" id="hdt"><div class="section-intro"><span class="pill confirmed">HDT · ENGINEERING TOOLKITS</span><h2>익숙한 도구를 유지하며 자동화의 문턱을 낮추다</h2><p>Excel·외부 프로그램 연계에서 시작해 자체 개발과 플랫폼 내 직접 설계로 확장합니다.</p></div><div class="tool-grid"><article><i>XL</i><b>Excel Toolkit</b><p>기존 수식·계산 절차 연결</p><span>확인</span></article><article><i>301</i><b>HDT-301</b><p>WUE 연구 기반 도구</p><span>확인</span></article><article><i>302</i><b>HDT-302</b><p>Chiller water saving</p><span>확인</span></article><article><i>LSP</i><b>AutoLISP</b><p>CAD 반복 작업 시범 자동화</p><span>확인</span></article><article class="inferred-card"><i>BIM</i><b>BIM Connector</b><p>Revit/Dynamo 연계 후보</p><span>추정</span></article><article class="inferred-card"><i>API</i><b>Solver Gateway</b><p>해석 SW와 입출력 표준화</p><span>추정</span></article></div></section>
+
+    <section class="view" id="ai"><div class="section-intro"><span class="pill inferred-pill">PROPOSED AI LAYER</span><h2>답을 만드는 AI보다, 근거를 따라가는 AI</h2><p>표준 프로세스와 검증된 DB 위에서만 작동하고 엔지니어 승인 후 업무에 반영되는 구조입니다.</p></div><div class="ai-chat panel"><div class="chat-head"><b>HDX Engineering Assistant</b><span>RAG · Evidence mode</span></div><div class="message user">데이터센터 외기냉방 검토 시 확인해야 할 기준과 유사 프로젝트를 찾아줘.</div><div class="message bot"><b>검토 순서 제안</b><ol><li>프로젝트 요구조건과 기상 기준 확인</li><li>승인된 표준 계산서 및 유사 프로젝트 비교</li><li>HDT 계산 결과와 설계자 판단을 함께 기록</li></ol><div class="citations">근거 3건 · 전사 표준 2 · 프로젝트 문서 1</div></div><div class="approval"><button>근거 열기</button><button class="primary">검토 요청</button></div></div><div class="guardrails"><article><b>출처 고정</b><p>문서 버전·페이지·프로젝트 권한을 함께 반환</p></article><article><b>설계자 승인</b><p>AI 결과는 자동 확정하지 않고 검토 Gate로 전달</p></article><article><b>감사 추적</b><p>질문·근거·결정·수정 이력을 프로젝트에 보존</p></article></div></section>
+
+    <section class="view" id="evidence"><div class="section-intro"><span class="pill confirmed">EVIDENCE MATRIX</span><h2>무엇이 사실이고, 무엇이 복원 가설인가</h2><p>UI 요소를 클릭하면 근거 수준이 드러나도록 설계했습니다.</p></div><div class="evidence-table panel"><div class="ev-row head"><span>구성</span><span>판정</span><span>근거</span><span>해석</span></div><div class="ev-row"><b>HDP/HDB/HDT 3요소</b><em class="ok">확인</em><span>하이멕 DX 논문 Fig.1</span><p>플랫폼의 공식 정보구조</p></div><div class="ev-row"><b>Workflow·WBS·통합검색</b><em class="ok">확인</em><span>2025 DX 구축사례 논문</span><p>공개 개념도에 명시</p></div><div class="ev-row"><b>DB + File Server</b><em class="ok">확인</em><span>2025 DX 구축사례 논문</span><p>파라미터와 문서 분리</p></div><div class="ev-row"><b>RAG 검색 계층</b><em class="partial">부분확인</em><span>회사 발표의 RAG 구축</span><p>HDB 위 배치는 합리적 추정</p></div><div class="ev-row"><b>Revit/Dynamo 직접 연동</b><em class="guess">미확인</em><span>업계 벤치마크</span><p>후보 기능이며 현재 사실 아님</p></div><div class="ev-row"><b>지식그래프·디지털트윈</b><em class="guess">제안</em><span>글로벌 AX 방향</span><p>중장기 확장 계층</p></div></div></section>
+  </main>
+  <script src="app.js"></script>
+</body></html>

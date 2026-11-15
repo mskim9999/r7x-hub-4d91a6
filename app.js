@@ -1,0 +1,3 @@
+const labels={overview:'통합 대시보드',hdp:'HDP 프로세스',hdb:'HDB 데이터',hdt:'HDT 설계도구',ai:'AI 설계지원',evidence:'근거와 추정'};
+document.querySelectorAll('#nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#nav button,.view').forEach(x=>x.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.view).classList.add('active');document.getElementById('title').textContent=labels[btn.dataset.view];scrollTo({top:0,behavior:'smooth'})}));
+document.getElementById('toggleEvidence').addEventListener('click',e=>{document.body.classList.toggle('evidence-on');e.currentTarget.textContent=document.body.classList.contains('evidence-on')?'근거 표시 중':'근거 표시'});
