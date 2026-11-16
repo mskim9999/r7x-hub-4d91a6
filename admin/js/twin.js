@@ -11,21 +11,21 @@ const ST={run:["운전","#1f9d55"],stby:["대기","#8a94a3"],start:["기동 중"
 
 function mount(root){
   const P={load:5400,cap:3000,n:3,tank:60,loop:40,ts:18,lim:6,dly:180,stg:60,gen:40,ups:true,qb:600};
-  let S,speed=20,playing=true,raf=null,last=null,phase=0,trend=[];
+  let view=null,mode3=false,S,speed=20,playing=true,raf=null,last=null,phase=0,trend=[];
   const ys=[90,230,370],by=[70,155,240,325,410];
   root.innerHTML=`<div class="tw2">
    <div class="vbar"><b>냉수 계통 디지털 트윈</b><span class="small muted">냉동기 3대(N+1) · CRAH 5분기 · 시연용 모형</span><span class="sp"></span>
-     <button class="btn" id="tPlay">일시정지</button><label>배속 <select id="tSpd"><option>1</option><option>5</option><option selected>20</option><option>60</option></select>×</label><button class="btn" id="tReset">초기화</button></div>
+     <button class="btn" id="tMode" style="display:none">계통도로 보기</button><button class="btn" id="tPlay">일시정지</button><label>배속 <select id="tSpd"><option>1</option><option>5</option><option selected>20</option><option>60</option></select>×</label><button class="btn" id="tReset">초기화</button></div>
    <div class="vbar">${SC.map(s=>`<button class="btn ${s[0]==="normal"?"p":""}" data-sc="${s[0]}">${s[1]}</button>`).join("")}
      <span class="sp"></span><label>IT 부하 <input type="number" id="tLoad" value="${P.load}" step="300"> kW</label><label>축열 탱크 <input type="number" id="tTank" value="${P.tank}" step="20"> ㎥</label><label class="small"><input type="checkbox" id="tUps" checked> 펌프 UPS</label></div>
    <div class="tbody">
-    <svg id="tSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
+    <div class="tview"><div id="t3d" style="display:none"></div><svg id="tSvg" viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid meet">
      <rect width="1000" height="500" fill="#10151c"/>
      <rect x="680" y="40" width="130" height="400" fill="none" stroke="#3a4656" stroke-dasharray="4 4"/><text x="745" y="32" fill="#8fa0b5" font-size="12" text-anchor="middle">전산실</text>
      <g id="tPipes" fill="none" stroke-width="5" stroke-linecap="round"></g>
      <g id="tEq" font-size="11"></g>
      <g id="tTxt" font-size="11" fill="#dfe6ee"></g>
-    </svg>
+    </svg></div>
     <div class="vside">
      <h4>현재 상태 <span class="muted" id="tClock"></span></h4><div id="tRead"></div>
      <h4>판정</h4><div id="tVerdict" class="tv"></div>
@@ -33,7 +33,7 @@ function mount(root){
      <h4>이벤트</h4><div id="tLog" class="small tlog"></div>
     </div>
    </div>
-   <p class="small muted" style="margin:6px 0 0">관의 점선이 흐르는 속도는 유량, 색은 수온(파랑 = 차가움, 주황 = 따뜻함)을 뜻합니다. 장비 색: 초록 운전, 회색 대기, 노랑 기동 중, 빨강 고장.</p></div>`;
+   <p class="small muted" style="margin:6px 0 0" id="tHint">3D 화면: 끌어서 회전, 오른쪽 끌기로 이동, 휠로 확대. 관을 따라 흐르는 입자의 속도는 유량, 색은 수온(파랑 = 차가움, 주황 = 따뜻함)을 뜻합니다. 장비 색: 초록 운전, 회색 대기, 노랑 기동 중, 빨강 고장.</p></div>`;
   const svg=root.querySelector("#tSvg"),gP=svg.querySelector("#tPipes"),gE=svg.querySelector("#tEq"),gT=svg.querySelector("#tTxt"),NS="http://www.w3.org/2000/svg";
   const el=(g,tag,at)=>{const e=document.createElementNS(NS,tag);for(const k in at)e.setAttribute(k,at[k]);g.appendChild(e);return e};
   const pipes={};const pipe=(id,d)=>{el(gP,"path",{d,stroke:"#26303c","stroke-width":9});pipes[id]=el(gP,"path",{d,"stroke-dasharray":"10 9"})};
@@ -88,7 +88,7 @@ function mount(root){
     const cs=tcol(S.T,P.ts,lim+8),cr=tcol(Tr,P.ts,lim+8);
     ["hs","m1","m2","ds"].forEach(k=>{pipes[k].setAttribute("stroke",S.flow?cs:"#3b4450");pipes[k].setAttribute("stroke-dashoffset",-phase*3*S.flow)});
     ["dr","rm","rv"].forEach(k=>{pipes[k].setAttribute("stroke",S.flow?cr:"#3b4450");pipes[k].setAttribute("stroke-dashoffset",-phase*3*S.flow)});
-    by.forEach((y,i)=>{const q=branch(i),e=(q/P.qb-1)*100,bad=S.flow>0&&Math.abs(e)>10,ta=S.flow>0?S.T+6+(S.unbal&&i>0?0.3*i:0)+(bad&&e<0?1.5:0):S.Trk;
+    const bq=[],ba=[];by.forEach((y,i)=>{const q=branch(i),e=(q/P.qb-1)*100,bad=S.flow>0&&Math.abs(e)>10,ta=S.flow>0?S.T+6+(S.unbal&&i>0?0.3*i:0)+(bad&&e<0?1.5:0):S.Trk;bq.push(q/P.qb);ba.push(ta);
       pipes["b"+i].setAttribute("stroke",S.flow?cs:"#3b4450");pipes["b"+i].setAttribute("stroke-dashoffset",-phase*3*q/P.qb);pipes["r"+i].setAttribute("stroke",S.flow?cr:"#3b4450");pipes["r"+i].setAttribute("stroke-dashoffset",-phase*3*q/P.qb);
       eq.bv[i].setAttribute("fill",bad?"#d04437":"#c9d3de");eq.crah[i].setAttribute("fill",ta>lim+6?"#d04437":ta>lim+3?"#d99a1c":"#2d6fb5");eq["cf"+i].textContent=f(q,0)+" LPM";eq["ca"+i].textContent="급기 "+f(ta,1)+"℃"});
     eq.tankFill.setAttribute("fill",cs);eq.tankT.textContent=f(S.T,1)+"℃";eq.tsup.textContent="공급 "+f(S.T,1)+"℃";eq.tret.textContent="환수 "+f(Tr,1)+"℃";
@@ -101,16 +101,19 @@ function mount(root){
     const tr=root.querySelector("#tTrend");if(trend.length>1){const t0=trend[0][0],t1=trend[trend.length-1][0],X=t=>30+240*(t-t0)/Math.max(60,t1-t0),Y=T=>100-90*(T-(P.ts-0.5))/(P.lim+2);
       tr.innerHTML=`<line x1="30" x2="275" y1="${Y(lim)}" y2="${Y(lim)}" stroke="#d04437" stroke-dasharray="4 3"/><text x="2" y="${Y(lim)+3}" font-size="9" fill="#d04437">${lim}℃</text><text x="2" y="${Y(P.ts)+3}" font-size="9" fill="#56667c">${P.ts}℃</text><line x1="30" x2="275" y1="${Y(P.ts)}" y2="${Y(P.ts)}" stroke="#c5ccd6"/><polyline fill="none" stroke="#1f6fd0" stroke-width="1.8" points="${trend.map(p=>X(p[0])+","+Math.max(4,Y(p[1]))).join(" ")}"/>`}
     root.querySelector("#tLog").innerHTML=S.ev.slice(0,12).map(x=>`<div><span class="muted">${Math.floor(x[0]/60)}:${String(x[0]%60).padStart(2,"0")}</span> ${x[1]}</div>`).join("");
-    root.dataset.twinT=S.t;root.dataset.twinTemp=S.T.toFixed(3);root.dataset.twinRun=S.ch.filter(u=>u.s==="run").length}
+    root.dataset.twinT=S.t;root.dataset.twinTemp=S.T.toFixed(3);root.dataset.twinRun=S.ch.filter(u=>u.s==="run").length;if(view&&mode3)view.update({ch:S.ch,pumps:S.pumps,T:S.T,Tr,flow:S.flow,bq,ba,qb:P.qb,power:S.power,gen:S.gen,phase,ts:P.ts,lim,t:S.t,st:ST})}
   let acc=0;
   function frame(ts){if(last===null)last=ts;const dt=Math.min(0.1,(ts-last)/1000);last=ts;
     if(playing){acc+=dt*speed;let n=0;while(acc>=1&&n<400){step();acc-=1;n++}phase+=dt*Math.min(6,1+speed/12)*6}
     ui();raf=requestAnimationFrame(frame)}
   root.addEventListener("click",e=>{const b=e.target.closest("[data-sc]");if(b){trigger(b.dataset.sc);e.stopPropagation();return}
+    if(e.target.id==="tMode"){setMode(!mode3);return}
     if(e.target.id==="tPlay"){playing=!playing;e.target.textContent=playing?"일시정지":"재생"}else if(e.target.id==="tReset"){root.querySelectorAll("[data-sc]").forEach(x=>x.classList.toggle("p",x.dataset.sc==="normal"));reset()}});
   root.addEventListener("change",e=>{const t=e.target;if(t.id==="tSpd")speed=+t.value;else if(t.id==="tLoad"){P.load=Math.max(300,+t.value||300);reset()}else if(t.id==="tTank"){P.tank=Math.max(0,+t.value||0)}else if(t.id==="tUps"){P.ups=t.checked}else return;e.stopPropagation()});
-  root.__twin={fast(sec){for(let i=0;i<sec;i++)step();ui()},trigger,state:()=>S};
-  reset();raf=requestAnimationFrame(frame);stop=()=>cancelAnimationFrame(raf);
+  function setMode(on){mode3=on&&!!view;root.querySelector("#t3d").style.display=mode3?"":"none";svg.style.display=mode3?"none":"";root.querySelector("#tMode").textContent=mode3?"계통도로 보기":"3D로 보기";root.dataset.mode=mode3?"3d":"2d"}
+  root.__twin={view:()=>view,fast(sec){for(let i=0;i<sec;i++)step();ui()},trigger,state:()=>S};
+  reset();raf=requestAnimationFrame(frame);let dead=false;stop=()=>{dead=true;cancelAnimationFrame(raf);if(view)view.dispose()};
+  if(window.TWIN3D)TWIN3D.create(root.querySelector("#t3d")).then(v=>{if(dead){v.dispose();return}view=v;root.querySelector("#tMode").style.display="";root.querySelector("#t3d").style.display="";setMode(true)}).catch(()=>{root.querySelector("#tHint").textContent="3D 라이브러리를 불러오지 못해 계통도로 표시합니다(인터넷 연결 필요). 관의 점선이 흐르는 속도는 유량, 색은 수온을 뜻합니다."});
 }
 window.TWIN={mount(root){this.unmount();mount(root)},unmount(){if(stop){stop();stop=null}}};
 })();

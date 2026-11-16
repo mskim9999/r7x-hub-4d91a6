@@ -142,3 +142,11 @@ body{word-break:keep-all;overflow-wrap:anywhere}
  .subnav a{padding:8px 12px;font-size:12.5px;color:var(--ink2);white-space:nowrap;border-bottom:2px solid transparent}
  .subnav a.on{color:#12458f;font-weight:700;border-bottom-color:#1f6fd0}
  .mods a{padding:0 10px}}
+
+/* 트윈 3D, 도구 MAP의 트윈 띠 */
+.tview{min-width:0}
+#t3d canvas{border:1px solid #2a3038}
+.tcardrow{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:8px 12px;cursor:pointer}
+.tcardrow:hover{border-color:#1f6fd0}
+.tcardrow img{width:150px;height:64px;object-fit:cover;border:1px solid #2a3038;flex:none}
+.tcardrow>div{flex:1;min-width:0}
