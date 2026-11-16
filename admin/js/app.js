@@ -44,8 +44,10 @@ const SIDE={
 };
 function shell(route){const m=route.split("/")[0];
   $("#mods").innerHTML=MODS.map(x=>x?`<a href="#/${x[0]}" class="${x[0]===m?"on":""}">${x[1]}${x[2]?` <i>${x[2]}</i>`:""}</a>`:`<span class="sep"></span>`).join("");
+  $("#subnav").innerHTML=(SIDE[m]||[]).flatMap(g=>g[1]).filter((x,i,arr)=>arr.length>1).map(x=>`<a href="#/${x[0]}" class="${route===x[0]||(route.startsWith(x[0]+"/")&&x[0].includes("/"))?"on":""}">${x[1]}</a>`).join("");
   $("#side").innerHTML=(SIDE[m]||[]).map(g=>(g[0]?`<h5>${g[0]}</h5>`:"")+g[1].map(a=>`<a href="#/${a[0]}" class="${route===a[0]||(route.startsWith(a[0]+"/")&&a[0].includes("/"))?"on":""}">${a[1]}${a[2]?`<em>${a[2]}</em>`:""}</a>`).join("")).join("");}
-const head=(t,p,g,gt)=>`<div class="crumb">${crumb()}</div><div class="ph"><div><h1>${t}</h1>${p?`<p>${p}</p>`:""}</div>${g?grade(g,gt):""}</div>`;
+const head=(t,p,g,gt)=>`<div class="crumb">${crumb()}</div><div class="ph"><div><h1>${t}</h1>${p?`<p>${p}</p>`:""}</div><span style="display:flex;gap:10px;align-items:center">${srcLink()}${g?grade(g,gt):""}</span></div>`;
+function srcLink(){const m=(location.hash||"#/hub").slice(2).split("/")[0],t={hdp:"source/hdp",hdb:"source/hdb",hdt:"source/hdt",hub:"source",bench:"source/etc",insight:"source",evidence:"source"}[m];return t?`<a class="btn" style="padding:2px 9px;font-size:12px" data-go="${t}">출처</a>`:""}
 function crumb(){const r=(location.hash||"#/hub").slice(2),m=r.split("/")[0],M=MODS.find(x=>x&&x[0]===m),it=(SIDE[m]||[]).flatMap(g=>g[1]).filter(x=>r===x[0]||r.startsWith(x[0]+"/")).sort((x,y)=>y[0].length-x[0].length)[0];return ["HOME",M?M[1]:"",it&&it[0]!==m?it[1]:""].filter(Boolean).join(" > ")}
 
 /* ══════════ HUB ══════════ */
@@ -267,7 +269,7 @@ function vTwin(){const steps=[["설계 모델","부하, 장비 용량, 배관 �
 function srcLinks(ids){return (ids||[]).map(id=>{const l=SRC.links[id];return l?`<div><a href="${l[1]}" target="_blank" rel="noopener">${e(l[0])}</a></div>`:""}).join("")}
 function kindTag(k){return k.split("·").map(x=>`<span class="tag ${x==="가"?"g":x==="나"?"":"o"}" title="${e(SRC.kinds[x]||"")}">${x}</span>`).join("")}
 function srcTable(rows){return `<div class="tw"><table class="t"><tr><th style="min-width:210px">항목</th><th>구분</th><th>어디서 가져왔나</th><th style="min-width:230px">출처</th></tr>${rows.map(r=>`<tr><td><b>${e(r[0])}</b></td><td style="text-align:center;white-space:nowrap">${kindTag(r[1])}</td><td>${e(r[2])}</td><td class="small">${srcLinks(r[3])||`<span class="muted">–</span>`}</td></tr>`).join("")}</table></div>`}
-function vSource(sub){const legend=`<div class="card"><h3>구분</h3><div class="grid g3">${Object.entries(SRC.kinds).map(([k,v])=>`<div>${kindTag(k)} <b>${v}</b><div class="small muted">${{"가":"논문, 홈페이지, 공식 영상·블로그, 보도, 구축사 공개 글","나":"고시·기준 명칭, ASHRAE 등 교재의 식, 오픈소스 라이브러리와 공개 샘플","다":"특정 문헌에서 옮기지 않고 일반 실무 지식으로 쓴 것, 예시값, 가상 데이터"}[k]}</div></div>`).join("")}</div></div>`;
+function vSource(sub){const tabs=`<div class="disc">${[["","요약"],["hdp","업무 프로세스"],["hdb","데이터베이스"],["hdt","설계 도구"],["etc","뷰어·화면·기타"]].map(x=>`<button class="${(sub||"")===x[0]?"on":""}" data-go="source${x[0]?"/"+x[0]:""}">${x[1]}</button>`).join("")}</div>`;const legend=tabs+`<div class="card"><h3>구분</h3><div class="grid g3">${Object.entries(SRC.kinds).map(([k,v])=>`<div>${kindTag(k)} <b>${v}</b><div class="small muted">${{"가":"논문, 홈페이지, 공식 영상·블로그, 보도, 구축사 공개 글","나":"고시·기준 명칭, ASHRAE 등 교재의 식, 오픈소스 라이브러리와 공개 샘플","다":"특정 문헌에서 옮기지 않고 일반 실무 지식으로 쓴 것, 예시값, 가상 데이터"}[k]}</div></div>`).join("")}</div></div>`;
  if(sub==="hdp")return head("출처 · 업무 프로세스","분야별 프로세스, 설계조건·적용 법규, 양식, 유사 프로젝트의 출처","A")+legend+
   `<div class="card mt"><h3>전 분야 공통</h3>${srcTable(SRC.hdp.common)}</div>
   <div class="card mt tw"><h3>분야별</h3><table class="t"><tr><th>분야</th><th>단계 구분의 출처</th><th>업무 수 / 체크사항</th><th style="min-width:300px">업무에 인용한 법규·기준(명칭)</th><th>출처 링크</th></tr>

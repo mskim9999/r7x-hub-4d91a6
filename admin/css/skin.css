@@ -135,3 +135,10 @@ body{word-break:keep-all;overflow-wrap:anywhere}
 .tlog{max-height:150px;overflow:auto}
 .tlog div{padding:2px 0;border-bottom:1px dashed var(--line2)}
 @media (max-width:1100px){.tbody{grid-template-columns:1fr}}
+
+/* 하위 탭(좁은 화면에서 왼쪽 메뉴 대신) */
+.subnav{display:none}
+@media (max-width:1100px){.subnav{display:flex;gap:0;overflow-x:auto;margin:-14px -18px 12px;padding:0 10px;background:#fafbfc;border-bottom:1px solid var(--line)}
+ .subnav a{padding:8px 12px;font-size:12.5px;color:var(--ink2);white-space:nowrap;border-bottom:2px solid transparent}
+ .subnav a.on{color:#12458f;font-weight:700;border-bottom-color:#1f6fd0}
+ .mods a{padding:0 10px}}
