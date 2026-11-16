@@ -6,25 +6,35 @@
   <title>HDX Hub — Reverse Engineering Concept</title>
   <meta name="description" content="하이멕 공개 자료를 토대로 복원한 HDX Hub 플랫폼 콘셉트">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="hdx-evidence.css">
 </head>
 <body>
   <aside class="rail">
     <div class="brand"><span class="mark">H</span><div><b>HDX Hub</b><small>Concept Reconstruction</small></div></div>
     <nav id="nav">
-      <button class="active" data-view="overview">⌂ <span>통합 대시보드</span></button>
-      <button data-view="hdp">⇄ <span>HDP 프로세스</span></button>
-      <button data-view="hdb">▤ <span>HDB 데이터</span></button>
-      <button data-view="hdt">⌘ <span>HDT 설계도구</span></button>
+      <small class="nav-label">전사</small>
+      <button class="active" data-view="overview">⌂ <span>Dashboard</span></button>
+      <button data-view="hdb">▤ <span>프로젝트 관리</span></button>
+      <button data-view="hdb">⌕ <span>통합문서/DB검색</span></button>
+      <button data-view="hdb">▦ <span>통합문서 관리</span></button>
+      <small class="nav-label">표준정보</small>
+      <button data-view="hdp">⇄ <span>Workflow Map</span></button>
+      <button data-view="hdp">W <span>WBS 표준</span></button>
+      <button data-view="hdb">S <span>양식·기준 표준</span></button>
+      <small class="nav-label">설계지원</small>
+      <button data-view="hdt">⌘ <span>Toolkit List</span></button>
       <button data-view="ai">✦ <span>AI 설계지원</span></button>
-      <button data-view="evidence">◎ <span>근거와 추정</span></button>
+      <button data-view="evidence">◎ <span>공개근거·복원범위</span></button>
     </nav>
     <div class="scope"><b>공개자료 기반 콘셉트</b><p>실제 내부 화면이나 구현을 복제한 것이 아닙니다.</p></div>
   </aside>
   <main>
-    <header><div><p class="eyebrow">HIMEC DIGITAL TRANSFORMATION</p><h1 id="title">통합 대시보드</h1></div><div class="header-actions"><button class="ghost" id="toggleEvidence">근거 표시</button><div class="avatar">AX</div></div></header>
+    <header><div><p class="eyebrow">HDX PLATFORM / ENGINEERING WORKSPACE</p><h1 id="title">통합 대시보드</h1></div><div class="header-actions"><label class="project-switch"><span>업무영역</span><select><option>전사 표준</option><option>프로젝트</option></select></label><button class="ghost" id="toggleEvidence">근거 표시</button><div class="avatar">AX</div></div></header>
+    <div class="workspace-bar"><b>전사</b><span>›</span><strong>Dashboard</strong><i></i><span class="source-badge">B등급 · 공식 구조도 기반 복원</span><time>기준일 2026.11.16</time></div>
 
     <section class="view active" id="overview">
-      <div class="hero"><div><span class="pill confirmed">CONFIRMED STRUCTURE</span><h2>프로세스가 데이터를 만들고,<br>데이터가 설계를 더 빠르게 합니다.</h2><p>HDP·HDB·HDT를 하나의 업무 흐름으로 연결한 HDX Hub 복원 콘셉트입니다.</p></div><div class="cycle"><div>HDP<small>표준 업무</small></div><i>→</i><div>HDB<small>지식 자산</small></div><i>→</i><div>HDT<small>자동 설계</small></div></div></div>
+      <div class="reconstruction-notice"><b>공개 근거 기반 복원 화면</b><p>실제 내부 UI 캡처는 공개 자료에서 확인되지 않았습니다. 아래 화면은 하이멕 공식 논문 Fig.1의 메뉴와 전사/프로젝트 구획을 업무 포털 UI로 옮긴 것입니다.</p><button data-go="evidence">근거 확인</button></div>
+      <div class="hero"><div><span class="pill confirmed">HDX PLATFORM</span><h2>프로세스·데이터·설계도구를<br>하나의 엔지니어링 업무 흐름으로</h2><p>HDP에서 표준 업무를 실행하고, HDB에 산출물을 축적하며, HDT로 반복 설계를 지원합니다.</p></div><div class="cycle"><div>HDP<small>Engineering Process</small></div><i>→</i><div>HDB<small>Engineering Database</small></div><i>↔</i><div>HDT<small>Engineering Toolkits</small></div></div></div>
       <div class="metrics"><article><span>진행 프로젝트</span><b>24</b><small>예시 데이터</small></article><article><span>표준 Workflow</span><b>128</b><small>콘셉트 표시</small></article><article><span>등록 Toolkit</span><b>14</b><small class="confirmed-text">공개자료 확인</small></article><article><span>검토 대기</span><b>7</b><small>예시 데이터</small></article></div>
       <div class="grid two"><article class="panel"><div class="panel-head"><div><span class="kicker">PROJECT WBS</span><h3>업무·산출물 현황</h3></div><button>전체 보기</button></div><div class="progress-list"><div><span>기계설비 기본설계</span><b>78%</b><i style="--p:78%"></i></div><div><span>전기·정보통신 실시설계</span><b>54%</b><i style="--p:54%"></i></div><div><span>데이터센터 공조 검토</span><b>91%</b><i style="--p:91%"></i></div></div></article><article class="panel"><div class="panel-head"><div><span class="kicker">KNOWLEDGE</span><h3>최근 표준자료</h3></div></div><div class="docs"><button><i>STD</i><span>기계설비 계산서 표준<small>기준표준 · 승인됨</small></span><b>›</b></button><button><i>DWG</i><span>데이터센터 표준도면<small>표준도면 · 검토중</small></span><b>›</b></button><button><i>LAW</i><span>기계설비 법규 업데이트<small>외부 DB · 동기화</small></span><b>›</b></button></div></article></div>
       <article class="panel architecture"><div class="panel-head"><div><span class="kicker">RECONSTRUCTED ARCHITECTURE</span><h3>HDX 순환 구조</h3></div><span class="legend"><i></i> 확인 <i></i> 추정</span></div><div class="arch-flow"><div class="arch-card cyan"><b>HDP</b><span>Process 관리</span><span>Workflow Map</span><span>Workflow Biz</span></div><em>업무 실행</em><div class="arch-card blue"><b>HDB</b><span>프로젝트 WBS</span><span>통합문서·DB 검색</span><span>DB + File Server</span></div><em>입력·출력</em><div class="arch-card navy"><b>HDT</b><span>Excel Toolkit</span><span>자체 개발 SW</span><span>외부 프로그램</span></div><em class="inferred">검증 후 학습</em><div class="arch-card ai"><b>AI / RAG</b><span>근거형 검색</span><span>설계 검토 보조</span><span>Human approval</span></div></div></article>

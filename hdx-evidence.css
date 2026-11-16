@@ -1,0 +1,113 @@
+/* Official Fig.1-informed workspace treatment. Actual internal UI is not public. */
+:root {
+  --blue: #0876bf;
+  --cyan: #08b9e9;
+  --navy: #06345d;
+}
+
+.rail {
+  padding-top: 22px;
+  overflow-y: auto;
+}
+
+.brand { padding-bottom: 14px; }
+nav { gap: 2px; }
+nav button { padding: 9px 12px; font-size: 12px; }
+
+.nav-label {
+  display: block;
+  color: #6489a6;
+  font-size: 9px;
+  letter-spacing: 1.3px;
+  font-weight: 800;
+  padding: 13px 14px 4px;
+  text-transform: uppercase;
+}
+
+.project-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  padding: 5px 8px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.project-switch select {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+  outline: 0;
+}
+
+.workspace-bar {
+  height: 42px;
+  background: #f8fbfd;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 42px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.workspace-bar b,
+.workspace-bar strong { color: var(--ink); }
+.workspace-bar i { height: 15px; width: 1px; background: var(--line); }
+.workspace-bar time { margin-left: auto; }
+
+.source-badge {
+  background: #e8f5fb;
+  color: var(--blue);
+  padding: 5px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.reconstruction-notice {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 14px;
+  background: #fff8e8;
+  border: 1px solid #ecd59e;
+  border-left: 4px solid var(--amber);
+  padding: 12px 16px;
+  margin-bottom: 14px;
+  border-radius: 7px;
+}
+
+.reconstruction-notice b { font-size: 12px; color: #81520b; }
+.reconstruction-notice p { margin: 0; color: #765f3a; font-size: 11px; line-height: 1.5; }
+.reconstruction-notice button {
+  border: 1px solid #d3ae5b;
+  background: white;
+  color: #81520b;
+  border-radius: 5px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.hero {
+  border-radius: 8px;
+  background: linear-gradient(115deg, #07558a 0%, #0876bf 62%, #08b9e9);
+}
+
+@media (max-width: 1000px) {
+  .nav-label { font-size: 0; height: 8px; padding: 0; }
+  .workspace-bar { padding: 0 22px; }
+  .project-switch span { display: none; }
+}
+
+@media (max-width: 650px) {
+  .workspace-bar { overflow-x: auto; white-space: nowrap; }
+  .workspace-bar time { display: none; }
+  .reconstruction-notice { grid-template-columns: 1fr; }
+  .reconstruction-notice button { justify-self: start; }
+  .project-switch { display: none; }
+}
