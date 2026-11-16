@@ -1,0 +1,109 @@
+/* 실무 시스템 스킨 (2026-11-16)
+   근거: 같은 구축사의 다른 고객 화면(흰 바탕, 파란 주 버튼, 회청색 보조 버튼, 표 중심, 분류 트리).
+   그라데이션, 그림자, 둥근 카드, 색 칩을 걷어 내고 사내 업무 시스템처럼 조밀하게.
+   로그인 화면만 실제 화면을 따라 그대로 둔다. */
+:root{--r:2px;--shadow:none;--bg:#f2f3f5;--line:#d3d8df;--line2:#e4e7ec;--blue:#1f6fd0;--navy:#27456f;--sky:#3b78b8;--ink:#222a35;--ink2:#4a5564;--ink3:#7b8594}
+body{font-size:13px;line-height:1.5}
+.top{background:#1e3a66;box-shadow:none;height:44px;border-bottom:1px solid #162c4f;gap:16px}
+.brand{font-size:15px;font-weight:700}
+.brand small{opacity:.7}
+.mods a{font-weight:500;font-size:13px;padding:0 13px;border-top:0;border-bottom:0;opacity:.9}
+.mods a.on{background:#fff;color:#1e3a66;opacity:1;font-weight:700}
+.mods a.on i{opacity:.7}
+.who .pill{background:transparent;border:1px solid rgba(255,255,255,.35);border-radius:2px;padding:2px 8px}
+.who button{border-radius:2px}
+.body{grid-template-columns:196px 1fr}
+.side{padding:8px 0;background:#fafbfc}
+.side h5{margin:12px 14px 4px;font-size:11.5px;color:#27456f;border-bottom:1px solid var(--line);padding-bottom:5px;letter-spacing:0}
+.side a{padding:6px 14px 6px 18px;font-size:13px;border-left:0;justify-content:flex-start}
+.side a:before{content:"\00B7";margin-right:6px;color:var(--ink3)}
+.side a em{margin-left:auto;font-size:10.5px}
+.side a.on{background:#e6eef9;color:#12458f;border-left:0}
+.main{padding:14px 18px 50px}
+.wrap{max-width:none}
+.crumb{font-size:11.5px;color:var(--ink3);margin-bottom:6px}
+.ph{border-bottom:2px solid #27456f;padding-bottom:8px;margin-bottom:12px;align-items:flex-end}
+.ph h1{font-size:16px;letter-spacing:0}
+.ph h1:before{content:"";display:inline-block;width:4px;height:14px;background:#1f6fd0;margin-right:8px;vertical-align:-1px}
+.ph p{font-size:12.5px;color:var(--ink3);margin-top:3px;max-width:none}
+.card{border-radius:2px;box-shadow:none;padding:12px 14px;border-color:var(--line)}
+.card h3{font-size:13.5px;margin:-12px -14px 10px;padding:7px 14px;background:#f1f3f6;border-bottom:1px solid var(--line);font-weight:700}
+.card h3.mt{margin-top:12px;border-top:1px solid var(--line)}
+.card h3 small{font-size:11.5px}
+.grid{gap:10px}
+.mt{margin-top:10px}
+.mt2{margin-top:16px}
+.grade{border:0;background:transparent;padding:0;font-size:11px;font-weight:500;color:var(--ink3)!important;gap:3px}
+.grade b{background:transparent;width:auto;height:auto;border-radius:0}
+.grade b span{color:var(--ink2);font-weight:700}
+.grade b:before{content:"근거 ";font-weight:500;color:var(--ink3)}
+.tag,.tag.v,.tag.g,.tag.o,.tag.r,.tag.k{border-radius:2px;background:#fff;border:1px solid #cfd5dd;color:#3d4756;padding:0 6px;font-size:11.5px;line-height:18px}
+.tag.g{border-color:#9cc7b3;color:#17694a}
+.tag.o{border-color:#ddc08a;color:#7a5200}
+.tag.r{border-color:#e2a9a3;color:#a3322a}
+.btn{border-radius:2px;padding:4px 11px;font-size:12.5px;border-color:#b9c2ce;background:#f7f8fa}
+.btn.p{background:#1f6fd0;border-color:#1f6fd0}
+.note,.note.b,.note.o{border:1px solid var(--line);background:#f8f9fb;color:var(--ink2);border-radius:2px;font-size:12.5px;padding:8px 11px}
+table.t{font-size:12.5px;border:1px solid var(--line)}
+table.t th{background:#eef1f5;border:1px solid var(--line);padding:6px 8px;text-align:center;color:#2f3a49}
+table.t td{border:1px solid var(--line2);padding:6px 8px}
+table.t tr:hover td{background:#f5f9ff}
+.hero{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:2px;padding:12px 16px}
+.hero .ring{display:none}
+.hero h1{font-size:16px}
+.hero p{opacity:1;color:var(--ink2);margin-top:4px;max-width:none}
+.tri{gap:10px;margin-top:10px}
+.mod{border-radius:2px;box-shadow:none}
+.mod:hover{transform:none;box-shadow:none;border-color:var(--blue)}
+.mod .hd{background:#3b78b8;padding:8px 14px;text-align:left;display:flex;align-items:baseline;gap:8px}
+.mod .hd b{font-size:15px;display:inline}
+.mod .bd{background:#fff;padding:10px 14px}
+.kpi b{font-size:20px;letter-spacing:0}
+.disc{gap:0;margin-bottom:10px;border-bottom:1px solid #27456f}
+.disc button{border-radius:0;border:1px solid var(--line);border-bottom:0;margin-right:-1px;padding:6px 14px;font-weight:500;background:#f1f3f6}
+.disc button.on{background:#27456f;border-color:#27456f}
+.phase>.ph2{background:#dfe7f1;color:#1e3a66;border-radius:0;border:1px solid #b9c7d9;padding:6px 10px;font-size:12.5px}
+.phase>.ph2 small{opacity:1;color:#56667c}
+.phase:not(:last-child)>.ph2:after{border-left-color:#b9c7d9;right:-15px}
+.task{border-radius:0;box-shadow:none;border-left-width:3px;border-left-color:#7f9cc0;padding:7px 9px}
+.task.gate{border-left-color:#c0504d}
+.task.on{background:#eaf2fd;box-shadow:none;border-color:#1f6fd0}
+.task b{font-size:12.5px;font-weight:600}
+.prog{border-radius:0;height:5px}
+.prog i,.sim .bar i{background:#1f6fd0}
+.sim .bar{border-radius:0;height:6px}
+.why i{border-radius:2px;background:#fff;border:1px solid #9cc7b3}
+.why i.x{border-color:#dfe3e8;background:#fff}
+.lin .n{border-radius:0;min-width:120px}
+.lin .n.hit{box-shadow:none;border-color:#c0504d;background:#fdf3f2}
+.lin .n.hit .v{color:#a3322a}
+.pc,.tc{border-radius:2px}
+.tc.run:hover{box-shadow:none}
+.fld input,.fld select,.filters select,.filters input{border-radius:2px;border-color:#b9c2ce;padding:4px 7px}
+.out .o{border-radius:2px;background:#fafbfc;border-color:var(--line)}
+.out .o b{font-size:17px}
+.trace{background:#f6f7f9;color:#2b3442;border:1px solid var(--line);border-radius:2px}
+.prop{border-radius:2px;box-shadow:none}
+.prop .hd{background:#f1f3f6;color:var(--ink);border-bottom:1px solid var(--line);padding:8px 14px}
+.prop .hd b{font-size:15px;color:#1f6fd0;opacity:1}
+.prop .hd b:after{content:"."}
+.prop .hd h3{font-size:13.5px}
+.big{font-size:13px;line-height:1.65}
+.lv i{border-radius:0}
+.lv i.f{background:#27456f}
+sup.fn{color:#56667c;font-weight:500}
+table.stack .me{background:#f1f6fd}
+table.stack th.me{background:#dfe9f7}
+.foot{margin-top:18px;padding-top:8px;border-top:1px solid var(--line);font-size:11.5px;color:var(--ink3)}
+@media (max-width:1100px){.body{grid-template-columns:1fr}}
+table.stack td,table.stack th{min-width:138px}
+table.stack td:first-child,table.stack th:first-child{min-width:84px}
+.grade b:before{margin-right:3px}
+.grade b{margin-right:4px}
+.side a em{display:none}
+.lin{flex-wrap:wrap;row-gap:8px}
+table.stack th{white-space:normal}table.stack{table-layout:fixed}
+body{word-break:keep-all;overflow-wrap:anywhere}
+.detail{grid-template-columns:1.5fr 1fr 1fr}
+.chk span{line-height:1.45}
+.phase>.ph2{text-align:center}

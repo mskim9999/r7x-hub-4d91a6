@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>HDX 재구성 — 공개 자료 기반 지원자 재구성본</title>
+<link rel="stylesheet" href="css/hdx.css">
+<link rel="stylesheet" href="css/skin.css">
+</head>
+<body>
+<!-- 이 페이지는 하이멕의 실제 HDX 시스템이 아니다. 공개된 논문·영상·보도만으로 지원자가 다시 만들어 본 학습용 재구성본이다.
+     근거 논문:
+     1) 오채미·권오익·장원복, 「건축설비엔지니어링 디지털전환(DX) 구축 방안」, 대한설비공학회 2024 동계학술발표대회 논문집 pp.279-280
+     2) 김응진·권오익·최용구·장원복, 「건축설비엔지니어링 디지털전환(DX) 구축 사례 및 AI 전략」, 대한설비공학회 2025 동계학술발표대회 논문집 pp.207-210
+     3) 김지혜·엄태윤·연창근, 「데이터센터 공조 설계 지원 프로그램을 위한 설비 시스템 DB 체계 구축」, 대한설비공학회 2018 동계학술발표대회 논문집 pp.225-228 -->
+
+<div id="login">
+  <div class="login-card">
+    <div class="login-visual">
+      <svg viewBox="0 0 400 430" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fd0ee"/><stop offset=".55" stop-color="#2f9bd8"/><stop offset="1" stop-color="#17609f"/></linearGradient>
+        <linearGradient id="rv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fe0f2"/><stop offset="1" stop-color="#2aa3cf"/></linearGradient></defs>
+        <rect width="400" height="430" fill="url(#sk)"/>
+        <g fill="#1b5f9c" opacity=".55"><rect x="0" y="120" width="46" height="310"/><rect x="50" y="170" width="38" height="260"/><rect x="92" y="90" width="30" height="340"/><rect x="286" y="60" width="54" height="370"/><rect x="344" y="130" width="56" height="300"/><rect x="250" y="150" width="32" height="280"/></g>
+        <g fill="#124a80" opacity=".7"><rect x="14" y="200" width="60" height="230"/><rect x="300" y="110" width="46" height="320"/><rect x="352" y="210" width="48" height="220"/><rect x="232" y="230" width="40" height="200"/></g>
+        <polygon points="150,430 172,250 228,250 250,430" fill="url(#rv)"/>
+        <g fill="#0f3f6e" opacity=".8"><rect x="160" y="300" width="80" height="6"/><rect x="155" y="340" width="90" height="7"/><rect x="150" y="385" width="100" height="8"/></g>
+        <g fill="#bfeaf7" opacity=".5"><rect x="296" y="80" width="3" height="330"/><rect x="306" y="80" width="3" height="330"/><rect x="316" y="80" width="3" height="330"/><rect x="326" y="80" width="3" height="330"/><rect x="22" y="215" width="3" height="200"/><rect x="34" y="215" width="3" height="200"/><rect x="46" y="215" width="3" height="200"/></g>
+      </svg>
+      <div class="t"><b>HDX Hub</b><span>HIMEC<br>Digital<br>Transformation<br>Hub</span></div>
+    </div>
+    <form class="login-form" id="loginForm" autocomplete="off">
+      <div class="co">HIMEC</div>
+      <div class="pf">HDX Platform</div>
+      <label for="uid">ID</label>
+      <input id="uid" type="text" value="guest" spellcheck="false">
+      <label for="upw">Password</label>
+      <input id="upw" type="password" placeholder="입력하지 않아도 들어갑니다">
+      <div class="rem"><input id="rem" type="checkbox"><label for="rem" style="margin:0;font-size:12px;color:inherit">Remember ID</label></div>
+      <button type="submit">LOG IN</button>
+    </form>
+  </div>
+  <div class="login-note"><b>공개된 로그인 화면(2025-12 영상 "HDX Platform3", 2026-01 론칭 후 "HDX Hub") 구성을 따라 그린 지원자 재구성본 · 실제 HDX 시스템이 아니며 인증하지 않습니다</b></div>
+</div>
+
+<div id="app" class="hide">
+  <header class="top">
+    <div class="brand" id="brand">HDX Platform<small>재구성본</small></div>
+    <nav class="mods" id="mods"></nav>
+    <div class="who"><span class="pill">작업 프로젝트 <select id="curPj" style="background:transparent;border:0;color:#fff;font-weight:700;max-width:170px"></select></span><button id="logout">로그아웃</button></div>
+  </header>
+  <div class="body">
+    <aside class="side" id="side"></aside>
+    <main class="main"><div class="wrap" id="view"></div></main>
+  </div>
+</div>
+
+<script src="js/data-hdp.js"></script>
+<script src="js/data-hdb.js"></script>
+<script src="js/data-hdt.js"></script>
+<script src="js/data-bench.js"></script>
+<script src="js/data-insight.js"></script>
+<script src="js/data-arch.js"></script>
+<script src="js/tools.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
