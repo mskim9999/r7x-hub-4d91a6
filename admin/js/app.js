@@ -30,16 +30,17 @@ function similar(base,tags){const words=s=>s.split(/[+·()\s,]+/).filter(x=>x.le
     return{p,s,why}}).sort((a,b)=>b.s-a.s)}
 
 /* ── 메뉴 ── */
-const MODS=[["hub","HUB","허브"],["hdp","HDP","업무 프로세스"],["hdb","HDB","데이터베이스"],["hdt","HDT","설계 도구"],null,["bench","벤치마킹",""],["insight","함의·제언",""],["evidence","근거",""]];
+const MODS=[["hub","HUB","허브"],["hdp","HDP","업무 프로세스"],["hdb","HDB","데이터베이스"],["hdt","HDT","설계 도구"],null,["bench","벤치마킹",""],["insight","함의·제언",""],["evidence","근거",""],["source","출처",""]];
 const SIDE={
  hub:[["",[["hub","HDX 허브"]]]],
  hdp:[["HDP · 디지털 프로세스",[["hdp/map","Workflow Map 관리","분야별 흐름"],["hdp/process","Process 관리","WBS 표준"],["hdp/biz","Workflow Biz 관리","비즈니스별"]]]],
  hdb:[["HDB · 전사",[["hdb/dash","Dashboard"],["hdb/search","통합문서/DB 검색"],["hdb/projects","프로젝트 관리"],["hdb/forms","양식 표준"],["hdb/std","기준 표준정보","디지털 도서관"],["hdb/equip","장비 DB"]]],
       ["HDB · 프로젝트",[["hdb/project","프로젝트 개요·WBS·산출물"],["hdb/link","산출물 데이터 연동","변경 영향"]]]],
- hdt:[["HDT · 디지털 툴킷",[["hdt/list","Toolkit List","14종"],["hdt/ext","현업 도구 지도","영상 판독"],["hdt/view/dxf","도면 뷰어(DXF)","2D CAD"],["hdt/view/ifc","모델 뷰어(IFC)","BIM"],["hdt/how","연결 방식","API·자체 개발"]]]],
+ hdt:[["HDT · 디지털 툴킷",[["hdt/list","Toolkit List","14종"],["hdt/twin","디지털 트윈 커미셔닝","제안 3종"],["hdt/ext","현업 도구 지도","영상 판독"],["hdt/view/dxf","도면 뷰어(DXF)","2D CAD"],["hdt/view/ifc","모델 뷰어(IFC)","BIM"],["hdt/how","연결 방식","API·자체 개발"]]]],
  bench:[["벤치마킹",[["bench","국내외 플랫폼"],["bench/try","직접 가입해 볼 곳"],["bench/compare","HDX와 비교"],["bench/arch","플랫폼 구성도","5개 비교"]]]],
  insight:[["함의",[["insight","문제의식 → 제언"]]]],
- evidence:[["근거",[["evidence","근거 등급과 출처"]]]]
+ evidence:[["근거",[["evidence","근거 등급과 출처"]]]],
+ source:[["출처",[["source","요약"],["source/hdp","업무 프로세스"],["source/hdb","데이터베이스"],["source/hdt","설계 도구"],["source/etc","뷰어·화면·기타"]]]]
 };
 function shell(route){const m=route.split("/")[0];
   $("#mods").innerHTML=MODS.map(x=>x?`<a href="#/${x[0]}" class="${x[0]===m?"on":""}">${x[1]}${x[2]?` <i>${x[2]}</i>`:""}</a>`:`<span class="sep"></span>`).join("");
@@ -243,16 +244,52 @@ function vEvidence(){return head("근거 등급과 출처","항목별 근거 등
  <div class="card mt"><h3>확인하지 못한 것</h3><ul class="c"><li>로그인 이후의 실제 화면(대시보드, 메뉴 배치, 색, 글꼴)</li><li>HDT 14종의 전체 이름과 각 도구의 계산 방식</li><li>HDB의 실제 문서 수와 데이터 구조, 기술 스택</li><li>CAD·BIM과의 현재 연결 수준, RAG 구성</li><li>영상 속 CFD와 2D CAD의 정확한 제품명</li></ul><p class="small muted">면접에서 물어볼 수 있다면 가장 먼저 확인하고 싶은 항목입니다.</p></div>
  <div class="card mt"><h3>출처</h3><ol class="fnl" style="padding-left:0;list-style:none">${BENCH.refs.map(r=>`<li><b>[${r[0]}]</b> ${e(r[1])} ${r[2].length===1?grade(r[2],r[2]):""}</li>`).join("")}</ol></div>`}
 
+/* ══════════ 디지털 트윈 커미셔닝 ══════════ */
+function vTwin(){const steps=[["설계 모델","부하, 장비 용량, 배관 저항, 제어 순서(HDB의 설계값)"],["가상 TAB","분기 유량·밸브 설정 사전 계산"],["제어 시퀀스 검증","고장 시 예비기 투입 시간표"],["가상 IST","정전·냉방 상실 시 버티는 시간"],["현장 시험","같은 시나리오로 실측"],["대조·환류","예측과 실측 차이를 HDB에 기록, 다음 설계 보정"]];
+ return head("디지털 트윈 커미셔닝","설계값 한 벌로 현장 시험을 미리 돌려 보는 도구 묶음. 14종 밖의 제안","D","제안")+
+ `<div class="card"><h3>흐름</h3><div class="lin">${steps.map(x=>`<div class="n"><b>${x[0]}</b>${x[1]}</div>`).join("")}</div></div>
+ <div class="grid g3 mt">${HDT.proposed.map(tcard).join("")}</div>
+ <div class="card mt tw"><h3>벤치마킹 대상과의 대응</h3><table class="t"><tr><th>참고한 플랫폼</th><th>그 플랫폼이 하는 일</th><th>여기서 만든 것</th><th>차이</th></tr>
+ <tr><td><b>Hysopt</b><br><span class="small muted">설비(배관) 설계 특화</span></td><td>배관 계통 모델로 유량·밸브 설정을 계산해 시운전까지 연결</td><td><a data-go="hdt/run/vtab">가상 TAB</a></td><td>분기 간 상호 영향을 단순화한 근사. 그 제품의 계산 엔진을 쓰지 않음</td></tr>
+ <tr><td><b>Jacobs 데이터센터 디지털 트윈</b><br><span class="small muted">엔지니어링사 솔루션</span></td><td>제어·시스템 검증 모듈: 운전 시퀀스를 설치 전 가상 시험</td><td><a data-go="hdt/run/vseq">제어 시퀀스 검증</a></td><td>상태 전이만 흉내 낸 단순 모형. 실제 제어반 로직과 연결되지 않음</td></tr>
+ <tr><td><b>NVIDIA Omniverse DSX</b><br><span class="small muted">디지털 트윈 참조 구성</span></td><td>전력·냉각 해석을 하나의 모델에 연결, 대리모델로 가정 시나리오 응답</td><td><a data-go="hdt/run/vcx">가상 IST</a></td><td>에너지 수지 한 줄 계산. 3D·해석 연동 없음</td></tr></table>
+ <p class="small muted" style="margin:8px 0 0">세 플랫폼 모두 외부에서 불러 쓸 수 있는 무료 API가 없어 방식만 참고해 직접 구현했습니다. HVAKR은 설계 전용이라 커미셔닝 기능은 확인되지 않았습니다.</p></div>
+ <div class="note mt">디지털 트윈이라고 부르려면 설계 모델과 현장 실측이 같은 장비·계통 단위로 묶여 서로 갱신돼야 합니다. 여기서는 설계값으로 시험을 미리 계산하고 측정값과 대조하는 단계까지만 구현했습니다. 계측 데이터 자동 수집과 제어 로직 에뮬레이션은 다음 단계입니다.</div>`}
+
+/* ══════════ 출처 ══════════ */
+function srcLinks(ids){return (ids||[]).map(id=>{const l=SRC.links[id];return l?`<div><a href="${l[1]}" target="_blank" rel="noopener">${e(l[0])}</a></div>`:""}).join("")}
+function kindTag(k){return k.split("·").map(x=>`<span class="tag ${x==="가"?"g":x==="나"?"":"o"}" title="${e(SRC.kinds[x]||"")}">${x}</span>`).join("")}
+function srcTable(rows){return `<div class="tw"><table class="t"><tr><th style="min-width:210px">항목</th><th>구분</th><th>어디서 가져왔나</th><th style="min-width:230px">출처</th></tr>${rows.map(r=>`<tr><td><b>${e(r[0])}</b></td><td style="text-align:center;white-space:nowrap">${kindTag(r[1])}</td><td>${e(r[2])}</td><td class="small">${srcLinks(r[3])||`<span class="muted">–</span>`}</td></tr>`).join("")}</table></div>`}
+function vSource(sub){const legend=`<div class="card"><h3>구분</h3><div class="grid g3">${Object.entries(SRC.kinds).map(([k,v])=>`<div>${kindTag(k)} <b>${v}</b><div class="small muted">${{"가":"논문, 홈페이지, 공식 영상·블로그, 보도, 구축사 공개 글","나":"고시·기준 명칭, ASHRAE 등 교재의 식, 오픈소스 라이브러리와 공개 샘플","다":"특정 문헌에서 옮기지 않고 일반 실무 지식으로 쓴 것, 예시값, 가상 데이터"}[k]}</div></div>`).join("")}</div></div>`;
+ if(sub==="hdp")return head("출처 · 업무 프로세스","분야별 프로세스, 설계조건·적용 법규, 양식, 유사 프로젝트의 출처","A")+legend+
+  `<div class="card mt"><h3>전 분야 공통</h3>${srcTable(SRC.hdp.common)}</div>
+  <div class="card mt tw"><h3>분야별</h3><table class="t"><tr><th>분야</th><th>단계 구분의 출처</th><th>업무 수 / 체크사항</th><th style="min-width:300px">업무에 인용한 법규·기준(명칭)</th><th>출처 링크</th></tr>
+  ${HDP.disciplines.map(d=>{const ts=TASKS.filter(t=>t.disc===d.id),refs=[...new Set(ts.flatMap(t=>t.refs))],b=SRC.hdp.byDisc[d.id];return `<tr><td><b>${d.name}</b><br><span class="small muted">${d.sub}</span></td><td>${e(b[0])}</td><td class="num" style="text-align:center">${ts.length} / ${ts.reduce((x,t)=>x+t.checks.length,0)}<br>${kindTag("다")}</td><td class="small">${refs.map(r=>`<span class="tag">${e(r)}</span>`).join("")}</td><td class="small">${srcLinks(b[1])}</td></tr>`}).join("")}</table></div>
+  <div class="note mt">${e(SRC.hdp.lawNote)}</div>`;
+ if(sub==="hdb")return head("출처 · 데이터베이스","규모 수치, 산출물·프로젝트 정보, 디지털 도서관, 표준 자료의 출처","A")+legend+`<div class="card mt"><h3>항목별</h3>${srcTable(SRC.hdb)}</div>`;
+ if(sub==="hdt")return head("출처 · 설계 도구","도구 이름과, 실행되는 도구의 입력값·예시 조건·결과·계산 근거의 출처","A")+legend+
+  `<div class="card mt"><h3>도구 이름</h3>${srcTable(SRC.hdtNames)}</div>
+  <div class="card mt tw"><h3>실행되는 도구 ${Object.keys(TOOLS).length}종</h3><table class="t"><tr><th style="min-width:130px">도구</th><th>입력 항목</th><th>기본값·예시 조건</th><th>결과 항목</th><th style="min-width:260px">계산 근거</th><th>검증 상태</th></tr>
+  ${Object.keys(TOOLS).map(k=>{const s=SRC.tools[k]||{},T=TOOLS[k];return `<tr><td><a data-go="hdt/run/${k}"><b>${e(T.title)}</b></a></td><td>${e(s.in||"")}<br>${kindTag("다")}</td><td>${e(s.def||"")}<br>${kindTag("다")}<div class="small muted">현재 기본값: ${T.fields.map(f=>`${f[1]} ${f[2]}${String(f[3]).startsWith("sel:")?"":f[3]}`).join(", ")}</div></td><td>${e(s.out||"")}</td><td>${e(s.calc||"")}<br>${kindTag(s.kind||((s.refs||[]).length?"나":"다"))}<div class="small">${srcLinks(s.refs)}</div></td><td class="small">${e(s.chk||"")}</td></tr>`}).join("")}</table></div>
+  <div class="note mt">입력 기본값과 예시 조건은 전부 화면을 보여 주려고 넣은 값입니다. 하이멕의 설계 기준이나 실제 프로젝트 값이 아니며, 실제로는 HDB의 설계기준서와 과거 실적에서 가져와야 합니다. 계산식은 공개된 교재와 기본 공학식이고 하이멕 도구의 로직은 공개되지 않아 알 수 없습니다.</div>`;
+ if(sub==="etc")return head("출처 · 뷰어·화면·기타","","A")+legend+`<div class="card mt"><h3>항목별</h3>${srcTable(SRC.etc)}</div>
+  <div class="card mt"><h3>전체 출처 목록</h3><ol class="fnl" style="padding-left:18px">${Object.values(SRC.links).map(l=>`<li><a href="${l[1]}" target="_blank" rel="noopener">${e(l[0])}</a></li>`).join("")}</ol></div>`;
+ return head("출처","이 사이트의 각 내용을 어디서 가져왔는지 정리","A")+legend+
+  `<div class="card mt tw"><h3>한눈에</h3><table class="t"><tr><th>내용</th><th>구분</th><th>설명</th></tr>${SRC.summary.map(r=>`<tr><td><b>${e(r[0])}</b></td><td style="text-align:center">${kindTag(r[1])}</td><td>${e(r[2])}</td></tr>`).join("")}</table></div>
+  <div class="grid g4 mt">${[["hdp","업무 프로세스","분야별 단계, 법규, 양식, 유사 프로젝트"],["hdb","데이터베이스","4,300건, 산출물, 도서관, 표준 자료"],["hdt","설계 도구","도구 이름, 입력값, 예시, 계산 근거"],["etc","뷰어·화면·기타","뷰어, 샘플 모델, 화면 형태"]].map(x=>`<div class="pc" data-go="source/${x[0]}"><b>${x[1]}</b><div class="s">${x[2]}</div></div>`).join("")}</div>
+  <div class="note mt">'가'는 하이멕이 스스로 공개한 내용이고, '다'는 제가 채운 내용입니다. 업무 이름·체크사항·양식·프로젝트 데이터·입력 예시값은 모두 '다'이므로 하이멕의 실제 내용과 다를 수 있습니다.</div>`}
+
 /* ══════════ 라우터·이벤트 ══════════ */
 function render(){let r=(location.hash||"#/hub").slice(2)||"hub";const s=r.split("/");let html,side=r;
  switch(s[0]){
   case"hub":html=vHub();break;
   case"hdp":if(s[1]==="process"){html=vProcess()}else if(s[1]==="biz"){html=vBiz()}else{html=vMap(s[2],s[3]);side="hdp/map"}break;
   case"hdb":({dash:()=>html=vDash(),search:()=>html=vSearch(),projects:()=>html=vProjects(),project:()=>html=vProject(s[2]),forms:()=>html=vForms(),std:()=>html=vStd(),equip:()=>html=vEquip(),link:()=>html=vLink()}[s[1]]||(()=>{html=vDash();side="hdb/dash"}))();if(s[1]==="project")side="hdb/project";break;
-  case"hdt":if(s[1]==="view"){html=vView(s[2]);side="hdt/view/"+(s[2]==="ifc"?"ifc":"dxf")}else if(s[1]==="run"){html=vRun(s[2]);side="hdt/list"}else if(s[1]==="ext")html=vExt();else if(s[1]==="how")html=vHow();else{html=vTools();side="hdt/list"}break;
+  case"hdt":if(s[1]==="twin"){html=vTwin()}else if(s[1]==="view"){html=vView(s[2]);side="hdt/view/"+(s[2]==="ifc"?"ifc":"dxf")}else if(s[1]==="run"){html=vRun(s[2]);side="hdt/list"}else if(s[1]==="ext")html=vExt();else if(s[1]==="how")html=vHow();else{html=vTools();side="hdt/list"}break;
   case"bench":html=vBench(s[1]);break;
   case"insight":html=vInsight();break;
   case"evidence":html=vEvidence();break;
+  case"source":html=vSource(s[1]);break;
   default:html=vHub();side="hub"}
  shell(side);const keep=s[0]==="hdp"&&s[3]||s[1]==="link"||s[1]==="run"||s[1]==="search"||s[1]==="dash";const sc=$(".main").scrollTop;$("#view").innerHTML=html+`<div class="foot">공개 자료 기반 재구성본 · 프로젝트·문서 데이터는 가상 · 근거 등급은 [근거] 메뉴 참조</div>`;$(".main").scrollTop=keep&&render.last===s.slice(0,3).join("/")?sc:0;render.last=s.slice(0,3).join("/");if(window.VIEWERS){VIEWERS.unmount();if(s[0]==="hdt"&&s[1]==="view")VIEWERS.mount(s[2]==="ifc"?"ifc":"dxf",document.querySelector("#vmount"))}}
 const go=r=>{if(location.hash==="#/"+r)render();else location.hash="#/"+r};

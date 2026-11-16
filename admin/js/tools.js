@@ -145,6 +145,43 @@ ${near.map(r=>`${String(r.n).padStart(3)}A: 유속 ${f(r.V,2)} m/s, 마찰손실
 필요 시간 = 발전기 ${i.gen}초 + 냉동기 재기동 ${i.rst}초 = ${need} 초
 ${steps.map(s=>`[${s[2]?"정상":"문제"}] ${s[0]}: ${s[1]}`).join("\n")}
 판정: ${ok?"설계값 기준으로는 통과 예상. 현장 IST에서 같은 시나리오로 실측해 이 값과 비교":"이대로 현장 시험에 가면 실패 가능성. 축열 용량, 재기동 시간, UPS 연결을 설계 단계에서 다시 검토"}
-주의: 실내 공기·랙의 열용량과 제어 지연은 빼고 계산한 보수적 근사`}}}
+주의: 실내 공기·랙의 열용량과 제어 지연은 빼고 계산한 보수적 근사`}}},
+
+ vtab:{title:"가상 TAB — 냉수 분기 밸런싱(제안)",basis:"설계값으로 분기별 밸런싱 밸브가 맡아야 할 차압을 먼저 계산하고, 현장 측정 유량과 대조해 합격 여부를 미리 본다. 배관 저항은 유량의 제곱에 비례한다는 기본식 사용. 분기 사이 상호 영향은 단순화한 근사.",
+  fields:[["n","분기 수",5,"개"],["q","분기당 설계 유량",600,"LPM"],["dt","말단(코일·밸브) 저항",45,"kPa"],["dm","주관 구간 저항(전 유량 기준)",8,"kPa"],["sc","측정 상태","조정 후","sel:조정 후,조정 전,가까운 분기 1개 미조정"],["tol","허용 오차",10,"%"]],
+  presets:[["조정 후 측정",{sc:"조정 후"}],["조정 전 측정",{sc:"조정 전"}],["1개 미조정",{sc:"가까운 분기 1개 미조정"}]],
+  run(i){const n=Math.max(2,Math.min(8,Math.round(i.n))),H=[];let acc=0;for(let k=1;k<=n;k++){acc+=2*i.dm*Math.pow((n-k+1)/n,2);H.push(i.dt+acc)}
+   const Hp=H[n-1],bv=H.map(h=>Hp-h),raw=H.map(h=>i.q*Math.sqrt(Hp/h)),dev=[3,-2,4,-5,1,-3,2,-4];
+   const meas=H.map((h,k)=>i.sc==="조정 전"?raw[k]:i.sc==="조정 후"?i.q*(1+dev[k]/100):k===0?raw[0]:i.q*(1-0.04-0.01*k));
+   const rows=meas.map((m,k)=>({k:k+1,bv:bv[k],m,e:(m/i.q-1)*100})),bad=rows.filter(r=>Math.abs(r.e)>i.tol);
+   return{out:[["펌프 필요 양정",f(Hp/9.80665,1),"mAq"],["가장 불리한 분기",n+"번",""],["허용 오차 초과",bad.length+" / "+n,"분기"],["사전 판정",bad.length?"재조정 필요":"합격 예상",""]],
+    chart:bars([rows.map(r=>Math.min(r.m,i.q)),rows.map(r=>Math.max(0,r.m-i.q))],rows.map(r=>r.k+"번"),["#2f7df6","#e58a7f"],Math.ceil(Math.max(...meas,i.q)*1.15/100)*100,"측정 유량(LPM)  ■설계 유량까지 ■초과분"),
+    trace:`분기 k의 필요 차압 = 말단 ${i.dt} kPa + 2 × Σ 주관 구간 저항(구간 유량비의 제곱)
+펌프 필요 양정 = 가장 먼 ${n}번 분기 기준 ${f(Hp,1)} kPa
+분기  필요차압  밸런싱 밸브 몫  측정 유량  편차
+${rows.map(r=>`${String(r.k).padStart(2)}번   ${f(H[r.k-1],1).padStart(6)} kPa   ${f(r.bv,1).padStart(6)} kPa   ${f(r.m,0).padStart(5)} LPM   ${(r.e>=0?"+":"")+f(r.e,1)}% ${Math.abs(r.e)>i.tol?"← 초과":""}`).join("\n")}
+조정 전 예상 유량 = 설계 유량 × √(펌프 양정 ÷ 분기 필요 차압)  (가까운 분기일수록 과유량)
+판정: ${bad.length?`${bad.map(r=>r.k+"번").join(", ")} 분기가 ±${i.tol}% 밖. 밸런싱 밸브를 위 '밸브 몫'에 맞춰 조정 후 재측정`:`전 분기 ±${i.tol}% 이내`}
+주의: 측정값은 시연용 가상 수치. 실제로는 TAB 기록지의 측정값을 넣어 대조`}}},
+
+ vseq:{title:"제어 시퀀스 검증 — 냉동기 고장 대응(제안)",basis:"운전 순서를 상태 전이(대기, 기동 중, 운전, 고장)로 놓고 시간 단계별로 진행시켜, 설치 전에 '고장이 나면 예비기가 제때 들어오는가'를 확인. 현장 기능 성능 시험의 기대 동작표를 미리 만드는 용도.",
+  fields:[["n","냉동기 대수",3,"대"],["cap","대당 용량",3000,"kW"],["load","냉방 부하",5400,"kW"],["sc","고장 시나리오","냉동기 1대 고장","sel:냉동기 1대 고장,냉동기 2대 동시 고장,정전 후 복전"],["dly","예비기 기동 소요",180,"초"],["stg","순차 기동 간격",60,"초"],["buf","냉수 열용량으로 버티는 시간",300,"초"]],
+  presets:[["1대 고장(N+1)",{sc:"냉동기 1대 고장"}],["2대 동시 고장",{sc:"냉동기 2대 동시 고장"}],["정전 후 복전",{sc:"정전 후 복전"}],["기동 지연 420초",{sc:"냉동기 1대 고장",dly:420}]],
+  run(i){const n=Math.max(1,Math.round(i.n)),need=Math.min(n,Math.ceil(i.load/i.cap)),st=[];for(let k=0;k<n;k++)st.push({s:k<need?"운전":"대기",on:0});
+   const ev=[],T0=60,log=[],xs=[],ys=[];let short=0,rec=null;
+   for(let t=0;t<=900;t+=10){
+     if(t===T0){ if(i.sc==="정전 후 복전"){st.forEach(u=>{u.s="정지";u.on=0});ev.push([t,"정전: 전 냉동기 정지"]);let c=0;st.forEach((u,k)=>{if(k<need){u.s="기동 중";u.on=T0+40+i.dly+c*i.stg;c++}});ev.push([t+40,"발전기 절체 완료, 순차 재기동 지령"])}
+       else{const kf=i.sc==="냉동기 2대 동시 고장"?2:1;let c=0;st.forEach(u=>{if(u.s==="운전"&&c<kf){u.s="고장";c++}});ev.push([t,`냉동기 ${kf}대 고장 발생`]);let j=0;st.forEach(u=>{if(u.s==="대기"){u.s="기동 중";u.on=T0+10+i.dly+j*i.stg;j++}});ev.push([t+10,j?`고장 감지, 예비기 ${j}대 기동 지령`:"고장 감지, 기동할 예비기 없음"])}}
+     st.forEach((u,k)=>{if(u.s==="기동 중"&&t>=u.on){u.s="운전";ev.push([t,`${k+1}호기 운전 진입`])}});
+     const capNow=st.filter(u=>u.s==="운전").length*i.cap;xs.push(t/60);ys.push(capNow/1000);
+     if(t>=T0&&capNow<i.load)short+=10;else if(t>T0&&rec===null&&capNow>=i.load)rec=t}
+   const fin=st.filter(u=>u.s==="운전").length*i.cap,ok=fin>=i.load&&short<=i.buf;
+   return{out:[["필요 대수",need+" / "+n,"대"],["용량 부족 지속",f(short,0),"초"],["버티는 시간",f(i.buf,0),"초"],["사전 판정",fin<i.load?"용량 미회복":ok?"통과 예상":"회복이 늦음",""]],
+    chart:line(xs,ys,rec?[rec/60,fin/1000]:null,"경과 시간(분)","운전 용량(MW)"),
+    trace:`초기: ${n}대 중 ${need}대 운전(부하 ${f(i.load,0)} kW ÷ 대당 ${f(i.cap,0)} kW), 예비 ${n-need}대
+${ev.sort((a,b)=>a[0]-b[0]).map(x=>`${String(x[0]).padStart(4)}초  ${x[1]}`).join("\n")}
+용량 부족 구간 ${short}초, 냉수 열용량으로 버티는 시간 ${i.buf}초
+판정: ${fin<i.load?"고장 후 남은 용량이 부하보다 작음. 예비 대수 또는 부하 차단 순서를 설계 단계에서 검토":ok?"부족 구간이 버티는 시간 안에 끝남. 현장 시험에서는 위 시간표를 기대 동작으로 사용":"예비기 투입이 늦어 버티는 시간을 넘김. 기동 소요 단축 또는 축열 용량 검토"}
+주의: 단순 상태 전이 모형. 실제 제어반 로직, 최소 정지 시간, 부분 부하 특성은 반영하지 않음`}}}
 };
 })();
