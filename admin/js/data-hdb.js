@@ -69,7 +69,7 @@ window.HDB = {
   ],
   // 산출물 간 데이터 자동 연동 시연(구축 기능목록 2번). 값은 단순 비례 모형의 가상 수치.
   lineage: {
-    base:{ oat:33.3, load:1840, chiller:2100, ct:2600, pump:75, elec:1450 },
+    base:{ oat:31.2, load:1840, chiller:2100, ct:2600, pump:75, elec:1450 },
     nodes:[
       ["bod","설계기준서","외기 건구","℃","oat"],["load","부하계산서","피크 냉방부하","RT","load"],
       ["cap","장비 용량 계산서","냉동기 용량","RT","chiller"],["ct","장비일람표","냉각탑 용량","RT","ct"],

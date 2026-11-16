@@ -10,7 +10,7 @@ const SC=[["normal","정상 운전"],["fail1","냉동기 1대 고장"],["fail2",
 const ST={run:["운전","#1f9d55"],stby:["대기","#8a94a3"],start:["기동 중","#d99a1c"],fail:["고장","#d04437"],off:["정지","#5b6470"]};
 
 function mount(root){
-  const P={load:5400,cap:3000,n:3,tank:60,loop:40,ts:18,lim:6,dly:180,stg:60,gen:40,ups:true,qb:600};
+  const P={load:5400,cap:3000,n:3,tank:60,loop:40,ts:18,lim:6,dly:180,stg:60,gen:10,ups:true,qb:600};
   let view=null,mode3=false,S,speed=20,playing=true,raf=null,last=null,phase=0,trend=[];
   const ys=[90,230,370],by=[70,155,240,325,410];
   root.innerHTML=`<div class="tw2">

@@ -19,12 +19,13 @@ function psy(t,rh,z=0){const P=patm(z),pw=pws(t)*rh/100,W=0.621945*pw/(P-pw),h=1
 function ductDp(D,q){const rho=1.2,nu=1.5e-5,e=0.00009,V=q/(Math.PI*D*D/4),Re=V*D/nu,fr=0.25/Math.pow(Math.log10(e/(3.7*D)+5.74/Math.pow(Re,0.9)),2);return {dp:fr/D*rho*V*V/2,V,Re,fr}}
 /* ── 배관: 강관(SGP) 안지름 mm ── */
 const SGP=[[25,27.6],[32,35.7],[40,41.6],[50,52.9],[65,67.9],[80,80.7],[100,105.3],[125,130.8],[150,155.2],[200,204.7],[250,254.2],[300,304.7],[350,339.8],[400,390.6]];
-function pipeDp(dmm,qls){const D=dmm/1000,rho=999,mu=1.3e-3,e=0.000045,V=(qls/1000)/(Math.PI*D*D/4),Re=rho*V*D/mu,fr=0.25/Math.pow(Math.log10(e/(3.7*D)+5.74/Math.pow(Re,0.9)),2);return {dp:fr/D*rho*V*V/2,V}}
+function pipeDp(dmm,qls){const D=dmm/1000,rho=999.65,mu=1.3056e-3,e=0.000045,V=(qls/1000)/(Math.PI*D*D/4),Re=rho*V*D/mu,fr=0.25/Math.pow(Math.log10(e/(3.7*D)+5.74/Math.pow(Re,0.9)),2);return {dp:fr/D*rho*V*V/2,V}}
 
 /* ── 근사 기상 모형(시연용). 실제 표준기상데이터가 아님 ── */
-const CLIM={서울:{m:12.8,a:14.0,d:4.5,rh:[56,55,55,54,60,66,77,74,67,62,60,57]},
-            대전:{m:13.3,a:13.6,d:5.0,rh:[62,58,56,55,61,68,78,77,72,68,66,64]},
-            부산:{m:15.0,a:10.6,d:3.5,rh:[47,50,56,60,67,76,82,78,71,61,55,48]}};
+/* 기상청 기후평년값(1991~2020): 연평균기온 m, 연진폭 a = (8월−1월 평균기온)/2, 일진폭 d = 연평균 일교차/2, 월평균 상대습도 rh */
+const CLIM={서울:{m:12.8,a:14.0,d:4.25,rh:[56.2,54.6,54.6,54.8,59.7,65.7,76.2,73.5,66.4,61.8,60.4,57.8]},
+            대전:{m:13.1,a:13.5,d:5.05,rh:[65.3,60.3,57.9,56.9,62.4,69.8,79.1,78.2,75.3,71.8,69.3,67.9]},
+            부산:{m:15.0,a:11.25,d:3.75,rh:[46.8,49.4,56.0,61.1,68.3,76.8,83.4,78.5,72.6,62.7,56.3,48.1]}};
 const MD=[31,28,31,30,31,30,31,31,30,31,30,31];
 function hours(city){const c=CLIM[city],out=[];let day=0;
   for(let mo=0;mo<12;mo++)for(let d=0;d<MD[mo];d++,day++)for(let h=0;h<24;h++){
@@ -47,9 +48,9 @@ function line(xs,ys,mark,xl,yl){const W=640,H=220,l=44,b=30,t=12,r=10,x0=Math.mi
   return s+`<text x="${W/2}" y="${H-1}" font-size="10" fill="#7d8aa0" text-anchor="middle">${xl}</text><text x="4" y="10" font-size="10" fill="#7d8aa0">${yl}</text></svg>`}
 
 window.TOOLS={
- psy:{title:"습공기 물성 계산",basis:"ASHRAE Fundamentals(2017) 1장의 포화수증기압·습공기 식. 습구온도와 노점은 이분법으로 수렴.",
-  fields:[["t","건구온도",33.3,"℃"],["rh","상대습도",58,"%"],["z","해발고도",38,"m"]],
-  presets:[["서울 여름 설계(예시)",{t:33.3,rh:58,z:38}],["실내 냉방 26℃ 50%",{t:26,rh:50,z:38}],["데이터센터 급기 24℃ 45%",{t:24,rh:45,z:38}],["겨울 외기 -11℃ 60%",{t:-11,rh:60,z:38}]],
+ psy:{title:"습공기 물성 계산",basis:"ASHRAE Handbook—Fundamentals(2017) 1장 식 3, 5·6, 20, 26, 30, 33·35. 습구온도와 노점은 이분법으로 수렴. 기본 조건은 건축물의 에너지절약설계기준 별표7(서울).",
+  fields:[["t","건구온도",31.2,"℃"],["rh","상대습도",63.6,"%"],["z","해발고도",0,"m"]],
+  presets:[["서울 냉방 설계(별표7)",{t:31.2,rh:63.6,z:0}],["대전 냉방 설계(별표7)",{t:32.3,rh:58.3,z:0}],["부산 냉방 설계(별표7)",{t:30.7,rh:70.4,z:0}],["서울 난방 설계(별표7)",{t:-11.3,rh:63,z:0}],["실내 냉방 26℃ 50%(별표8 범위)",{t:26,rh:50,z:0}],["데이터센터 급기 24℃ 45%(예시)",{t:24,rh:45,z:0}]],
   run(i){const r=psy(i.t,i.rh,i.z);return{out:[["절대습도",f(r.W*1000,2),"g/kg′"],["엔탈피",f(r.h,2),"kJ/kg′"],["노점온도",f(r.tdp,1),"℃"],["습구온도",f(r.twb,1),"℃"],["비체적",f(r.v,3),"㎥/kg′"],["수증기 분압",f(r.pw/1000,3),"kPa"]],
    trace:`대기압 P = 101,325 × (1 − 2.25577e-5 × ${i.z})^5.2559 = ${f(r.P,0)} Pa
 포화수증기압 Pws(${i.t}℃) = ${f(pws(i.t),1)} Pa
@@ -59,7 +60,7 @@ window.TOOLS={
 노점 = Pws(Tdp) = Pw 인 온도 → ${f(r.tdp,2)} ℃
 습구 = 단열포화식을 만족하는 온도 → ${f(r.twb,2)} ℃`}}},
 
- fc:{title:"프리쿨링 시간 계산",basis:"시간별 외기(8,760시간)를 냉수 공급온도와 접근온도에 비교. 기상은 월평균·일교차를 코사인으로 근사한 시연용 모형이며 표준기상데이터가 아님.",
+ fc:{title:"프리쿨링 시간 계산",basis:"시간별 외기(8,760시간)를 냉수 공급온도와 접근온도에 비교. 연평균기온·월평균 상대습도·일교차는 기상청 기후평년값(1991~2020)이고, 시간 분포는 코사인 곡선으로 편 근사(표준기상데이터 아님).",
   fields:[["city","지역","서울","sel:서울,대전,부산"],["mode","방식","수측(냉각탑+판형열교환기)","sel:수측(냉각탑+판형열교환기),공기측(직접 외기)"],["ts","냉수(급기) 공급온도",18,"℃"],["tr","환수(환기) 온도",26,"℃"],["ap","접근온도 합계",6,"K"]],
   presets:[["고온 냉수 18/26℃",{ts:18,tr:26,ap:6}],["일반 냉수 7/12℃",{ts:7,tr:12,ap:6}],["공기측 급기 24℃",{mode:"공기측(직접 외기)",ts:24,tr:36,ap:2}]],
   run(i){const hs=hours(i.city),air=i.mode.startsWith("공기측"),full=Array(12).fill(0),part=Array(12).fill(0),mech=Array(12).fill(0);
@@ -71,10 +72,10 @@ window.TOOLS={
 완전 프리쿨링: 기준 온도 + 접근온도(${i.ap}K) ≤ 공급온도(${i.ts}℃)
 부분 프리쿨링: 공급온도 < 기준 온도 + 접근온도 < 환수온도(${i.tr}℃)
 ${i.city} 근사 기상 8,760시간 판정 → 완전 ${F}h, 부분 ${Pp}h, 냉동기 ${M}h
-주의: 시연용 근사 기상. 실제 설계는 표준기상데이터 시간값을 넣어야 함`}}},
+주의: 평년값을 곡선으로 편 근사. 실제 설계는 표준기상데이터 시간값을 넣어야 함`}}},
 
- cop:{title:"히트펌프 외기영향 COP 계산",basis:"정격점에서 카르노 효율 대비 비율(η)을 구하고, 외기 변화에 따른 증발·응축 온도로 COP를 다시 계산. −5~5℃ 구간에 제상 손실 가정.",
-  fields:[["oat","외기온도",-5,"℃"],["tw","공급수온",45,"℃"],["cr","정격 COP(외기 7℃ 기준)",3.4,"–"],["tr","정격 공급수온",45,"℃"],["df","제상 손실",10,"%"]],
+ cop:{title:"히트펌프 외기영향 COP 계산",basis:"정격점(표준 시험점 A7/W35: 외기 건구 7℃, 공급수온 35℃)에서 카르노 효율 대비 비율(η)을 구하고, 외기 변화에 따른 증발·응축 온도로 COP를 다시 계산. −5~5℃ 구간에 제상 손실 가정.",
+  fields:[["oat","외기온도",-5,"℃"],["tw","공급수온",45,"℃"],["cr","정격 COP(A7/W35)",4.2,""],["tr","정격 공급수온",35,"℃"],["df","제상 손실",10,"%"]],
   presets:[["난방 45℃, 외기 -5℃",{oat:-5,tw:45}],["저온수 35℃, 외기 -5℃",{oat:-5,tw:35}],["혹한 -12℃",{oat:-12,tw:45}]],
   run(i){const car=(o,w)=>{const Tc=w+3+273.15,Te=o-8+273.15;return Tc/(Tc-Te)},eta=i.cr/car(7,i.tr);
    const cop=o=>{let c=eta*car(o,i.tw);if(o>-5&&o<5)c*=1-i.df/100;return c};const xs=[],ys=[];for(let o=-15;o<=20;o++){xs.push(o);ys.push(cop(o))}
@@ -86,7 +87,7 @@ ${i.city} 근사 기상 8,760시간 판정 → 완전 ${F}h, 부분 ${Pp}h, 냉�
 외기 ${i.oat}℃: 카르노 COP = ${f(car(i.oat,i.tw),2)} → COP = η × 카르노${(i.oat>-5&&i.oat<5)?` × (1 − ${i.df}%)`:""} = ${f(c,2)}
 주의: 단순 모형. 실제 선정은 제조사 성능표로 검증`}}},
 
- wue:{title:"WUE·냉각수 절감 계산",basis:"WUE = 연간 현장 물 사용량 ÷ 연간 IT 에너지(The Green Grid 정의). 증발량은 방열량 ÷ 증발잠열, 블로다운은 농축배수로 계산.",
+ wue:{title:"WUE·냉각수 절감 계산",basis:"WUE = 연간 현장 물 사용량 ÷ 연간 IT 에너지(The Green Grid 백서 #35). 증발량은 방열량 ÷ 증발잠열(약 30℃ 물 2,430 kJ/kg), 블로다운은 농축배수로 계산(미국 에너지부 FEMP 냉각탑 지침의 물수지). 참고: 미국 평균 현장 WUE 약 0.36 L/kWh(LBNL 2024).",
   fields:[["it","IT 부하",40,"MW"],["pue","PUE",1.3,"–"],["evap","증발 냉각 운전 비율",70,"%"],["coc","농축배수(COC)",4,"–"],["dry","건식(프리쿨링) 전환 비율",0,"%"]],
   presets:[["기본안",{evap:70,coc:4,dry:0}],["농축배수 4→6",{coc:6}],["건식 30% 전환",{dry:30}]],
   run(i){const calc=(evapPct,coc)=>{const heat=i.it*1000*i.pue,E=heat*(evapPct/100)*8760*3600/2430/1000,B=E/(coc-1),D=E*0.0005/1;return{E,B,tot:E+B+D}};
@@ -98,7 +99,7 @@ ${i.city} 근사 기상 8,760시간 판정 → 완전 ${F}h, 부분 ${Pp}h, 냉�
 WUE = (증발 + 블로다운 + 비산) ÷ IT 에너지 ${f(itE/1e6,1)} GWh = ${f(wue,2)} L/kWh
 참고: 기본안(증발 70%, COC 4) 물 사용 ${f(w0/1000,0)} 천㎥`}}},
 
- duct:{title:"덕트 사이징(등마찰법)",basis:"Darcy–Weisbach 식과 Swamee–Jain 마찰계수(아연도 강판 조도 0.09mm). 각형 환산은 ASHRAE 상당지름 식.",
+ duct:{title:"덕트 사이징(등마찰법)",basis:"Darcy–Weisbach 식과 Swamee–Jain 마찰계수(1976), 아연도 강판 조도 0.09mm(2017 ASHRAE Fundamentals Duct Design Table 1). 각형 환산은 상당지름 식. 허용 풍속은 저속덕트 상한 15 m/s 이하(KDS 31 25 30) 범위에서 입력.",
   fields:[["q","풍량",12000,"CMH"],["dp","단위 마찰손실",1.0,"Pa/m"],["vmax","허용 풍속",10,"m/s"],["ar","종횡비(폭:높이)",2,"–"]],
   presets:[["주 덕트 12,000CMH",{q:12000,dp:1.0,vmax:10}],["분기 3,000CMH",{q:3000,dp:1.0,vmax:7}],["저소음 실 1,200CMH",{q:1200,dp:0.8,vmax:5}]],
   run(i){const q=i.q/3600;let D=bis(d=>i.dp-ductDp(d,q).dp,0.05,4),r=ductDp(D,q),lim=false;
@@ -111,13 +112,13 @@ Re = ${f(r.Re,0)}, 마찰계수 f = ${f(r.fr,4)}
 ${lim?`풍속이 허용값 ${i.vmax} m/s를 넘어 풍속 기준으로 키움`:`풍속 ${f(r.V,1)} m/s ≤ 허용 ${i.vmax} m/s`}
 각형 환산 De = 1.30·(a·b)^0.625 / (a+b)^0.25, 종횡비 ${i.ar}:1`}}},
 
- pipe:{title:"배관 관경 선정",basis:"유량 = 열량 ÷ (비열 × 밀도 × 온도차). 강관(SGP) 규격별 Darcy–Weisbach 마찰손실을 계산해 기준 이내의 최소 관경을 고름.",
+ pipe:{title:"배관 관경 선정",basis:"유량 = 열량 ÷ (비열 × 밀도 × 온도차), 물 물성은 10℃ 값(NIST). 강관 호칭별 Darcy–Weisbach 마찰손실을 계산해 기준 이내의 최소 관경을 고름. 허용 마찰손실 기본값은 KDS 31 25 25 권장 범위 75~400 Pa/m의 상한. 관 안지름은 규격 원문과 대조하지 못한 값.",
   fields:[["kw","열량",1750,"kW"],["dt","온도차",5,"K"],["dp","허용 마찰손실",400,"Pa/m"],["vmax","허용 유속",3,"m/s"]],
   presets:[["냉수 500RT, ΔT 5K",{kw:1758,dt:5}],["고온 냉수 ΔT 8K",{kw:1758,dt:8}],["분기 200kW",{kw:200,dt:5,vmax:2}]],
-  run(i){const qls=i.kw/(4.19*i.dt),rows=SGP.map(([n,d])=>({n,...pipeDp(d,qls)})),pick=rows.find(r=>r.dp<=i.dp&&r.V<=i.vmax)||rows[rows.length-1];
+  run(i){const qls=i.kw/(4.1955*i.dt)*1000/999.65,rows=SGP.map(([n,d])=>({n,...pipeDp(d,qls)})),pick=rows.find(r=>r.dp<=i.dp&&r.V<=i.vmax)||rows[rows.length-1];
    const near=rows.filter(r=>Math.abs(rows.indexOf(r)-rows.indexOf(pick))<=1);
    return{out:[["유량",f(qls*60,0),"LPM"],["선정 관경",pick.n+"A",""],["유속",f(pick.V,2),"m/s"],["마찰손실",f(pick.dp,0),"Pa/m"],["100m당 손실",f(pick.dp*100/9806.65,1),"mAq"]],
-    trace:`유량 = ${f(i.kw,0)} kW ÷ (4.19 kJ/kg·K × ${i.dt} K) = ${f(qls,1)} L/s
+    trace:`유량 = ${f(i.kw,0)} kW ÷ (4.1955 kJ/kg·K × ${i.dt} K) ÷ 999.65 kg/㎥ = ${f(qls,1)} L/s
 ${near.map(r=>`${String(r.n).padStart(3)}A: 유속 ${f(r.V,2)} m/s, 마찰손실 ${f(r.dp,0)} Pa/m ${r===pick?"← 선정":""}`).join("\n")}
 기준: 마찰손실 ≤ ${i.dp} Pa/m, 유속 ≤ ${i.vmax} m/s`}}},
 
@@ -133,7 +134,7 @@ ${near.map(r=>`${String(r.n).padStart(3)}A: 유속 ${f(r.V,2)} m/s, 마찰손실
 주의: 여유율은 이 단계에서 한 번만. 다음 단계에서 다시 넣으면 중복`}}},
 
  vcx:{title:"가상 IST — 냉방 상실 시나리오(제안)",basis:"현장 통합시험(IST) 전에 설계값만으로 '정전 → 냉동기 정지 → 재기동' 동안 전산실이 버티는지 미리 계산. 냉수 계통과 축열조의 열용량 ÷ IT 발열로 버티는 시간을 구하고 재기동 시간과 비교. 제어 로직까지 흉내 내는 본격 디지털 트윈의 첫 단계.",
-  fields:[["it","IT 부하",8000,"kW"],["vol","냉수 계통 보유수량",120,"㎥"],["tank","축열(버퍼) 탱크",300,"㎥"],["dt","허용 냉수 온도 상승",6,"K"],["gen","발전기 기동·절체",40,"초"],["rst","냉동기 재기동",600,"초"],["pump","펌프·팬 UPS 연결","예","sel:예,아니오"]],
+  fields:[["it","IT 부하",8000,"kW"],["vol","냉수 계통 보유수량",120,"㎥"],["tank","축열(버퍼) 탱크",300,"㎥"],["dt","허용 냉수 온도 상승",6,"K"],["gen","발전기 기동·절체",10,"초"],["rst","냉동기 재기동",600,"초"],["pump","펌프·팬 UPS 연결","예","sel:예,아니오"]],
   presets:[["축열조 300㎥",{tank:300}],["축열조 없음",{tank:0}],["고밀도 16MW",{it:16000,tank:300}]],
   run(i){const cap=(i.vol+i.tank)*1000*4.19*i.dt,ride=cap/i.it,need=i.gen+i.rst,ups=i.pump==="예",ok=ups&&ride>=need,xs=[],ys=[];
    for(let s=0;s<=Math.max(need,ride)*1.2;s+=Math.max(10,Math.round(need/40))){xs.push(s/60);ys.push(Math.min(i.dt*1.6,ups?i.it*s/((i.vol+i.tank)*1000*4.19):i.dt*1.6*(s>30?1:s/30)))}
