@@ -113,7 +113,9 @@ function mount(root){
   function setMode(on){mode3=on&&!!view;root.querySelector("#t3d").style.display=mode3?"":"none";svg.style.display=mode3?"none":"";root.querySelector("#tMode").textContent=mode3?"계통도로 보기":"3D로 보기";root.dataset.mode=mode3?"3d":"2d"}
   root.__twin={view:()=>view,fast(sec){for(let i=0;i<sec;i++)step();ui()},trigger,state:()=>S};
   reset();raf=requestAnimationFrame(frame);let dead=false;stop=()=>{dead=true;cancelAnimationFrame(raf);if(view)view.dispose()};
-  if(window.TWIN3D)TWIN3D.create(root.querySelector("#t3d")).then(v=>{if(dead){v.dispose();return}view=v;root.querySelector("#tMode").style.display="";root.querySelector("#t3d").style.display="";setMode(true)}).catch(()=>{root.querySelector("#tHint").textContent="3D 라이브러리를 불러오지 못해 계통도로 표시합니다(인터넷 연결 필요). 관의 점선이 흐르는 속도는 유량, 색은 수온을 뜻합니다."});
+  const wait=document.createElement("div");wait.id="tWait";wait.textContent="3D 화면을 불러오는 중입니다";
+  if(window.TWIN3D){svg.style.display="none";svg.parentNode.insertBefore(wait,svg);root.dataset.mode="wait"}
+  if(window.TWIN3D)TWIN3D.create(root.querySelector("#t3d")).then(v=>{wait.remove();if(dead){v.dispose();return}view=v;root.querySelector("#tMode").style.display="";root.querySelector("#t3d").style.display="";setMode(true)}).catch(()=>{wait.remove();svg.style.display="";root.dataset.mode="2d";root.querySelector("#tHint").textContent="3D 라이브러리를 불러오지 못해 계통도로 표시합니다(인터넷 연결 필요). 관의 점선이 흐르는 속도는 유량, 색은 수온을 뜻합니다."});
 }
 window.TWIN={mount(root){this.unmount();mount(root)},unmount(){if(stop){stop();stop=null}}};
 })();
