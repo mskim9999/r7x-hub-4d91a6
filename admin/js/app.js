@@ -47,7 +47,8 @@ const SIDE={
 function shell(route){const m=route.split("/")[0];
   $("#mods").innerHTML=MODS.map(x=>x?`<a href="#/${x[0]}" class="${x[0]===m?"on":""}">${x[1]}${x[2]?` <i>${x[2]}</i>`:""}</a>`:`<span class="sep"></span>`).join("");
   $("#subnav").innerHTML=(SIDE[m]||[]).flatMap(g=>g[1]).filter((x,i,arr)=>arr.length>1).map(x=>`<a href="#/${x[0]}" class="${route===x[0]||(route.startsWith(x[0]+"/")&&x[0].includes("/"))?"on":""}">${x[1]}</a>`).join("");
-  $("#side").innerHTML=(SIDE[m]||[]).map(g=>(g[0]?`<h5>${g[0]}</h5>`:"")+g[1].map(a=>`<a href="#/${a[0]}" class="${route===a[0]||(route.startsWith(a[0]+"/")&&a[0].includes("/"))?"on":""}">${a[1]}${a[2]?`<em>${a[2]}</em>`:""}</a>`).join("")).join("");}
+  $("#side").innerHTML=(SIDE[m]||[]).map(g=>(g[0]?`<h5>${g[0]}</h5>`:"")+g[1].map(a=>`<a href="#/${a[0]}" class="${route===a[0]||(route.startsWith(a[0]+"/")&&a[0].includes("/"))?"on":""}">${a[1]}${a[2]?`<em>${a[2]}</em>`:""}</a>`).join("")).join("");
+  ["#mods a.on","#subnav a.on"].forEach(q=>{const n=$(q),b=n&&n.parentNode;if(b&&b.scrollWidth>b.clientWidth)b.scrollLeft=n.offsetLeft-b.offsetLeft-(b.clientWidth-n.offsetWidth)/2})}
 const head=(t,p,g,gt)=>`<div class="crumb">${crumb()}</div><div class="ph"><div><h1>${t}</h1>${p?`<p>${p}</p>`:""}</div><span style="display:flex;gap:10px;align-items:center">${srcLink()}${g?grade(g,gt):""}</span></div>`;
 function srcLink(){const m=(location.hash||"#/hub").slice(2).split("/")[0],t={hdp:"source/hdp",hdb:"source/hdb",hdt:"source/hdt",hub:"source",bench:"source/etc",insight:"source",evidence:"source"}[m];return t?`<a class="btn" style="padding:2px 9px;font-size:12px" data-go="${t}">출처</a>`:""}
 function crumb(){const r=(location.hash||"#/hub").slice(2),m=r.split("/")[0],M=MODS.find(x=>x&&x[0]===m),it=(SIDE[m]||[]).flatMap(g=>g[1]).filter(x=>r===x[0]||r.startsWith(x[0]+"/")).sort((x,y)=>y[0].length-x[0].length)[0];return ["HOME",M?M[1]:"",it&&it[0]!==m?it[1]:""].filter(Boolean).join(" > ")}
@@ -105,11 +106,25 @@ function taskDetail(t){const done=store.get("chk."+t.id,[]),p=curPj(),sims=simil
    <h4 class="small" style="margin:12px 0 6px">그 프로젝트의 같은 업무 산출물</h4>
    ${docs.map(d=>`<div class="li"><div>${e(d.type)} <span class="tag k">${d.ext}</span><small>${e(d.pj.name)} · ${d.rev}</small></div><a data-go="hdb/project/${d.pj.id}">열기</a></div>`).join("")||`<p class="muted small">유사 프로젝트에 이 업무(${t.id})로 등록된 산출물이 없습니다.</p>`}</div>
  </div></div>`}
-function vProcess(){const ph=phasesOf(pf.disc);
- return head("Process 관리","단위 업무(Process)를 등록·수정. Workflow Map과 WBS 표준이 이 목록에서 만들어진다","B","이름은 논문 Fig.1, 업무 내용은 재구성")+
- `<div class="card"><h3>Process 추가</h3><div class="filters"><select id="ptDisc" data-act="pfdisc">${HDP.disciplines.map(d=>`<option value="${d.id}" ${d.id===pf.disc?"selected":""}>${d.name}</option>`).join("")}</select>${selOpt("ptPh",ph.map(x=>[x.id,x.name]),ph[0].id)}${inp("ptName","업무 이름",210)}${inp("ptRole","담당 역할",110)}${inp("ptOut","산출물(쉼표로 구분)",190)}<button class="btn p" data-act="addtask">추가</button><button class="btn" data-act="resetedit">편집 내용 초기화</button></div>${edNote}</div>
+let pq={text:"",disc:"",kind:""};
+function vProcess(){const hit=TASKS.filter(t=>{const d=HDP.disciplines.find(x=>x.id===t.disc),p=phasesOf(t.disc).find(x=>x.id===t.ph);return(!pq.disc||t.disc===pq.disc)&&(!pq.kind||(pq.kind==="추가")===!!t.user||(pq.kind==="게이트"&&t.gate))&&(pq.kind!=="게이트"||t.gate)&&(!pq.text||[t.id,t.name,t.role,d.name,p?p.name:"",t.outs.join(" "),t.tools.map(toolName).join(" "),t.checks.join(" ")].join(" ").toLowerCase().includes(pq.text.toLowerCase()))});
+ const so=(k,arr,ph)=>`<select data-pq="${k}"><option value="">${ph}</option>${arr.map(x=>`<option value="${x[0]}" ${pq[k]===x[0]?"selected":""}>${x[1]}</option>`).join("")}</select>`;
+ return head("Process 관리","단위 업무(Process) 전체 목록. Workflow Map과 WBS 표준이 이 목록에서 만들어진다","B","이름은 논문 Fig.1, 업무 내용은 재구성")+
+ `<div class="card"><div class="filters"><input type="search" id="pqtext" placeholder="WBS 번호, 업무 이름, 담당, 산출물, 도구, 체크사항 (예: 부하, TAB, M-201)" value="${e(pq.text)}">${so("disc",HDP.disciplines.map(d=>[d.id,d.name]),"분야 전체")}${so("kind",[["표준","표준"],["추가","직접 추가"],["게이트","승인 게이트"]],"구분 전체")}<button class="btn" data-act="pqreset">초기화</button><span class="sp"></span><button class="btn p" data-go="hdp/process/new">Process 추가</button></div>
+  <p class="small muted" style="margin:10px 0 0">${hit.length}건 / 전체 ${TASKS.length}건</p></div>
  <div class="card mt tw"><table class="t"><tr><th>WBS</th><th>분야</th><th>단계</th><th>업무</th><th>담당</th><th>산출물</th><th>체크</th><th>도구</th><th>구분</th></tr>
- ${TASKS.map(t=>{const d=HDP.disciplines.find(x=>x.id===t.disc),p=phasesOf(t.disc).find(x=>x.id===t.ph);return `<tr class="click" data-go="hdp/map/${t.disc}/${t.id}"><td><b>${t.id}</b></td><td>${d.name}</td><td>${p?p.name:"–"}</td><td>${e(t.name)} ${t.gate?`<span class="tag r">게이트</span>`:""}</td><td>${e(t.role)}</td><td>${t.outs.map(e).join(", ")}</td><td class="num">${t.checks.length}</td><td>${t.tools.map(x=>`<span class="tag">${e(toolName(x))}</span>`).join("")}</td><td>${t.user?`<button class="btn" data-act="deltask" data-id="${t.id}">삭제</button>`:`<span class="small muted">표준</span>`}</td></tr>`}).join("")}</table></div>`}
+ ${hit.map(t=>{const d=HDP.disciplines.find(x=>x.id===t.disc),p=phasesOf(t.disc).find(x=>x.id===t.ph);return `<tr class="click" data-go="hdp/map/${t.disc}/${t.id}"><td><b>${t.id}</b></td><td>${d.name}</td><td>${p?p.name:"–"}</td><td>${e(t.name)} ${t.gate?`<span class="tag r">게이트</span>`:""}</td><td>${e(t.role)}</td><td>${t.outs.map(e).join(", ")}</td><td class="num">${t.checks.length}</td><td>${t.tools.map(x=>`<span class="tag">${e(toolName(x))}</span>`).join("")}</td><td>${t.user?`<button class="btn" data-act="deltask" data-id="${t.id}">삭제</button>`:`<span class="small muted">표준</span>`}</td></tr>`}).join("")||`<tr><td colspan="9" class="muted" style="text-align:center;padding:18px">조건에 맞는 Process가 없습니다.</td></tr>`}</table></div>`}
+function vProcessNew(){const ph=phasesOf(pf.disc),us=TASKS.filter(t=>t.user);
+ return head("Process 추가","새 단위 업무를 등록. 등록하면 Process 목록, Workflow Map, WBS 표준에 함께 나타난다","D","편집 기능은 재구성")+
+ `<div class="card form1"><h3>입력</h3>
+  <div class="fl"><label>분야</label><select id="ptDisc" data-act="pfdisc">${HDP.disciplines.map(d=>`<option value="${d.id}" ${d.id===pf.disc?"selected":""}>${d.name}</option>`).join("")}</select></div>
+  <div class="fl"><label>단계</label>${selOpt("ptPh",ph.map(x=>[x.id,x.name]),ph[0].id)}</div>
+  <div class="fl"><label>업무 이름</label><input id="ptName" placeholder="예: 냉각탑 보급수량 검토"></div>
+  <div class="fl"><label>담당 역할</label><input id="ptRole" placeholder="예: 설계 담당"></div>
+  <div class="fl"><label>산출물</label><input id="ptOut" placeholder="쉼표로 구분 (예: 검토서, 계산서)"></div>
+  <div class="fl"><label></label><span><button class="btn p" data-act="addtask">등록</button> <button class="btn" data-go="hdp/process">목록으로</button></span></div>${edNote}</div>
+ <div class="card mt tw"><h3>직접 추가한 Process <small>${us.length}건</small></h3>${us.length?`<table class="t"><tr><th>WBS</th><th>분야</th><th>업무</th><th>담당</th><th>산출물</th><th></th></tr>${us.map(t=>`<tr><td><a data-go="hdp/map/${t.disc}/${t.id}"><b>${t.id}</b></a></td><td>${HDP.disciplines.find(x=>x.id===t.disc).name}</td><td>${e(t.name)}</td><td>${e(t.role)}</td><td>${t.outs.map(e).join(", ")}</td><td><button class="btn" data-act="deltask" data-id="${t.id}">삭제</button></td></tr>`).join("")}</table>`:`<p class="muted small">아직 없습니다.</p>`}
+  <p style="margin:10px 0 0"><button class="btn" data-act="resetedit">편집 내용 전체 초기화</button> <span class="small muted">Process, 체크사항, Toolkit, 문서, Biz에 직접 추가한 내용을 모두 지웁니다.</span></p></div>`}
 function vBiz(){const rows=[["MDS · EDS · CDS · FDS","설계","기계·전기·통신·소방","계획설계 → 중간설계 → 실시설계 → 납품 → 사후설계관리","B","논문에 4개 분야 TFT 표준화 명시","mech"],["PCM","PM·CM","사업관리, 감리","착수 → 설계단계 관리 → 발주 → 시공 관리 → 준공","C","2026년 확장 계획으로 보도","pmcm"],["CXT","커미셔닝·TAB","Cx, TAB, IST","계획 → 설계 검토 → 설치 검증 → 성능 시험 → 인계","C","2026년 확장 계획으로 보도. 공모전 수상작 다수가 이 영역","cx"],["ECO","에너지·친환경 컨설팅","인증, 에너지 해석","예비 검토 → 해석 → 인증 서류 → 사후 검증","D","사업 분야는 공개, HDX 적용 여부 미확인",""]],ub=store.get("u.biz",[]);
  return head("Workflow Biz 관리","비즈니스(Biz-Code)별로 Workflow Map을 묶는 단위","B","Biz-Code 개념은 2024 논문 Fig.1")+
  `<div class="note b">2024년 논문 그림은 HDP 아래에 <b>Biz-Code</b>(MDS, MCN …)를 두고 코드마다 Process 1~4를 달았습니다. MDS·MCN의 뜻은 논문에 없습니다. 아래 코드는 같은 형식을 본떠 지원자가 붙인 가칭이며, M을 기계, DS를 설계로 읽은 것도 추정입니다.</div>
@@ -281,9 +296,10 @@ function vExtDb(){const R=[["설계용 외기 조건","건축물의 에너지절
 /* 편집 동작 */
 function act(a,el){const v=id=>{const n=$("#"+id);return n?n.value.trim():""};
  if(a==="pfdisc"){pf.disc=el.value;return true}
+ if(a==="pqreset"){pq={text:"",disc:"",kind:""};return true}
  if(a==="addtask"){const name=v("ptName");if(!name)return true;const us=store.get("u.tasks",[]),d=v("ptDisc"),pre=(TASKS.find(t=>t.disc===d&&!t.user)||{id:"U-"}).id.split("-")[0];let n=1;while(TASKS.some(t=>t.id===`${pre}-U${String(n).padStart(2,"0")}`))n++;
    const t={disc:d,ph:v("ptPh"),id:`${pre}-U${String(n).padStart(2,"0")}`,name,role:v("ptRole")||"담당 미지정",gate:false,outs:(v("ptOut")||"산출물 미지정").split(",").map(s=>s.trim()).filter(Boolean),checks:["체크사항을 Workflow Map 관리에서 추가"],forms:[],refs:[],tools:[],tags:[],ideas:[]};
-   us.push(t);store.set("u.tasks",us);TASKS.push(Object.assign({},t,{nb:1,user:true}));return true}
+   us.push(t);store.set("u.tasks",us);TASKS.push(Object.assign({},t,{nb:1,user:true}));pq={text:"",disc:"",kind:"추가"};location.hash="#/hdp/process";return true}
  if(a==="deltask"){const id=el.dataset.id;store.set("u.tasks",store.get("u.tasks",[]).filter(t=>t.id!==id));const i=TASKS.findIndex(t=>t.id===id);if(i>=0)TASKS.splice(i,1);for(let k=DOCS.length-1;k>=0;k--)if(DOCS[k].wbs===id)DOCS.splice(k,1);store.set("u.docs",store.get("u.docs",[]).filter(d=>d.wbs!==id));return true}
  if(a==="addchk"){const s=v("xchkIn"),t=TASKS.find(x=>x.id===el.dataset.id);if(!s||!t)return true;t.checks.push(s);if(t.user){const us=store.get("u.tasks",[]),u=us.find(x=>x.id===t.id);if(u){u.checks.push(s);store.set("u.tasks",us)}t.nb=t.checks.length}else store.set("xchk."+t.id,t.checks.slice(t.nb));return true}
  if(a==="delchk"){const t=TASKS.find(x=>x.id===el.dataset.id),i=+el.dataset.i;if(!t||i<t.nb)return true;t.checks.splice(i,1);store.set("xchk."+t.id,t.checks.slice(t.nb));store.set("chk."+t.id,store.get("chk."+t.id,[]).filter(x=>x!==i).map(x=>x>i?x-1:x));return true}
@@ -430,7 +446,7 @@ function vSource(sub){const tabs=`<div class="disc">${[["","요약"],["hdp","업
 function render(){let r=(location.hash||"#/hub").slice(2)||"hub";const s=r.split("/");let html,side=r;
  switch(s[0]){
   case"hub":html=vHub();break;
-  case"hdp":if(s[1]==="process"){html=vProcess()}else if(s[1]==="biz"){html=vBiz()}else{html=vMap(s[2],s[3]);side="hdp/map"}break;
+  case"hdp":if(s[1]==="process"){html=s[2]==="new"?vProcessNew():vProcess();side="hdp/process"}else if(s[1]==="biz"){html=vBiz()}else{html=vMap(s[2],s[3]);side="hdp/map"}break;
   case"hdb":({dash:()=>html=vDash(),search:()=>html=vSearch(),projects:()=>html=vProjects(),project:()=>html=vProject(s[2]),forms:()=>html=vForms(),std:()=>html=vStd(),equip:()=>html=vEquip(),link:()=>html=vLink(),maplist:()=>html=vMapList(),toolkits:()=>html=vToolkits(),docs:()=>html=vDocs(),wbs:()=>html=vWbs(),org:()=>html=vOrg(),pwbs:()=>html=vPwbs(s[2]),work:()=>html=vWork(s[2]),pdocs:()=>html=vPdocs(s[2])}[s[1]]||(()=>{html=vDash();side="hdb/dash"}))();if(["project","pwbs","work","pdocs"].includes(s[1]))side="hdb/"+s[1];break;
   case"hdt":if(s[1]==="twin"){html=vTwin();side="hdt/twin"}else if(s[1]==="excel")html=vExcel();else if(s[1]==="extdb")html=vExtDb();else if(s[1]==="view"){html=vView(s[2]);side="hdt/view/"+(s[2]==="ifc"?"ifc":"dxf")}else if(s[1]==="run"){html=vRun(s[2]);side="hdt/list"}else if(s[1]==="ext")html=vExt();else if(s[1]==="how")html=vHow();else{html=vTools();side="hdt/list"}break;
   case"bench":html=vBench(s[1]);break;
@@ -438,7 +454,7 @@ function render(){let r=(location.hash||"#/hub").slice(2)||"hub";const s=r.split
   case"evidence":html=vEvidence();break;
   case"source":html=vSource(s[1]);break;
   default:html=vHub();side="hub"}
- shell(side);const keep=s[0]==="hdp"||s[0]==="hdb"||s[1]==="link"||s[1]==="run"||s[1]==="search"||s[1]==="dash";const sc=$(".main").scrollTop;$("#view").innerHTML=html+`<div class="foot">공개 자료 기반 재구성본 · 프로젝트·문서 데이터는 가상 · 근거 등급은 [근거] 메뉴 참조</div>`;$(".main").scrollTop=keep&&render.last===s.slice(0,3).join("/")?sc:0;render.last=s.slice(0,3).join("/");if(window.TWIN){TWIN.unmount();if(s[0]==="hdt"&&s[1]==="twin")TWIN.mount(document.querySelector("#twmount"))}if(window.VIEWERS){VIEWERS.unmount();if(s[0]==="hdt"&&s[1]==="view")VIEWERS.mount(s[2]==="ifc"?"ifc":"dxf",document.querySelector("#vmount"))}}
+ shell(side);const keep=(s[0]==="hdp"&&s[1]!=="process")||s[0]==="hdb"||s[1]==="link"||s[1]==="run"||s[1]==="search"||s[1]==="dash";const sc=$(".main").scrollTop;$("#view").innerHTML=html+`<div class="foot">공개 자료 기반 재구성본 · 프로젝트·문서 데이터는 가상 · 근거 등급은 [근거] 메뉴 참조</div>`;$(".main").scrollTop=keep&&render.last===s.slice(0,3).join("/")?sc:0;render.last=s.slice(0,3).join("/");if(window.TWIN){TWIN.unmount();if(s[0]==="hdt"&&s[1]==="twin")TWIN.mount(document.querySelector("#twmount"))}if(window.VIEWERS){VIEWERS.unmount();if(s[0]==="hdt"&&s[1]==="view")VIEWERS.mount(s[2]==="ifc"?"ifc":"dxf",document.querySelector("#vmount"))}}
 const go=r=>{if(location.hash==="#/"+r)render();else location.hash="#/"+r};
 document.addEventListener("click",ev=>{const ac=ev.target.closest("[data-act]");if(ac&&ac.tagName!=="SELECT"){ev.preventDefault();ev.stopPropagation();if(act(ac.dataset.act,ac))render();return}
  const g=ev.target.closest("[data-go]");if(g){ev.preventDefault();ev.stopPropagation();go(g.dataset.go);return}
@@ -449,11 +465,13 @@ document.addEventListener("change",ev=>{const t=ev.target;
  if(t.dataset.act){if(act(t.dataset.act,t))render();return}
  if(t.dataset.chk){const k="chk."+t.dataset.chk,a=store.get(k,[]),i=+t.dataset.i;store.set(k,t.checked?[...new Set([...a,i])]:a.filter(x=>x!==i));render()}
  else if(t.dataset.q){q[t.dataset.q]=t.value;render()}
+ else if(t.dataset.pq){pq[t.dataset.pq]=t.value;render()}
  else if(t.dataset.in){const key=location.hash.split("/")[3],o=store.get("in."+key,{});o[t.dataset.in]=t.type==="number"?Number(t.value):t.value;store.set("in."+key,o);render()}
  else if(t.dataset.as){const a=store.get("assume",HDB.scale.assume);a[t.dataset.as]=Math.max(0,Number(t.value)||0);store.set("assume",a);render()}
  else if(t.id==="curPj"){cur=t.value;store.set("pj",cur);render()}});
 document.addEventListener("input",ev=>{const t=ev.target;
  if(t.id==="oat"){store.set("oat",Number(t.value));render();const n=$("#oat");if(n)n.focus()}
+ else if(t.id==="pqtext"){pq.text=t.value;const pos=t.selectionStart;render();const n=$("#pqtext");if(n){n.focus();n.setSelectionRange(pos,pos)}}
  else if(t.id==="qtext"){q.text=t.value;const pos=t.selectionStart;render();const n=$("#qtext");if(n){n.focus();n.setSelectionRange(pos,pos)}}});
 window.addEventListener("hashchange",render);
 
